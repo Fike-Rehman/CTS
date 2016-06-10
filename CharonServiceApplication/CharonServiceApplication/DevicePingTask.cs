@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CharonServiceApplication
@@ -12,6 +8,7 @@ namespace CharonServiceApplication
     // sends a ping to a device every minute to confirm that it is online
     // Ping is composed by a On request followed by a off request 'n' seconds
     // later where class needs to be singleton
+    // TODO: make this class singleton
     internal class DevicePingTask
     {
         //private readonly int _numTries = 3;
@@ -23,6 +20,13 @@ namespace CharonServiceApplication
 
         public int NumTries { get; } = 3;
 
+        /// <summary>
+        /// Executes a Device Ping. Tries a number of times based on the 
+        /// 'NumTries setting' before giving up. 
+        /// Executes synchronously... 
+        /// </summary>
+        /// <param name="logMessage"></param>
+        /// <returns></returns>
         public bool Execute(Action<string> logMessage)
         {
             var n = 0;
@@ -33,7 +37,7 @@ namespace CharonServiceApplication
 
                 // This will be blocking! It might cause problems if we running in a ASP.NET context
                 https://msdn.microsoft.com/en-us/magazine/jj991977.aspx
-                if (ExecuteAsync(new Progress<string>(logMessage)).Result)
+                if (ExecutePingAsync(new Progress<string>(logMessage)).Result)
                 {
                     return true;
                 }
@@ -42,19 +46,29 @@ namespace CharonServiceApplication
             return false;
         }
 
-        private async Task<bool> ExecuteAsync(IProgress<string> progress )
+
+        /// <summary>
+        /// Executes a Single Ping on the device with a PingOn request immediately followed by a ping off request. 
+        /// Makes the blue LED on the board blink. Ping delay controls how long the LED will stay On. 
+        /// Can be called Asynchronously. Reports progress as it executes.
+        /// </summary>
+        /// <param name="progress">progress object to report on the progress</param>
+        /// <param name="pingdelay">delay between ping on and ping Off (milliseconds)</param>
+        /// <returns></returns>
+        private static async Task<bool> ExecutePingAsync(IProgress<string> progress, int pingdelay = 2000 )
         {
             var bSuccess = false;
             // First send a Ping On:
             Task<string> pingtask =  PingAsync(true);
 
             progress?.Report("Sending Ping On message to the device...");
+
             var pingResponse = await pingtask;
 
             if (pingResponse == "Success")
             {
                 // wait for few seconds and send a ping Off
-                await Task.Delay(2000);
+                await Task.Delay(pingdelay);
                 
                 pingtask = PingAsync(false);
                 progress?.Report("Sending Ping OFF message to device...");
@@ -72,11 +86,7 @@ namespace CharonServiceApplication
             return bSuccess;
         }
 
-        public void TearDown()
-        {
-
-        }
-
+        
         private static async Task<string> PingAsync(bool @on)
         {
             var pingResponse = "";
