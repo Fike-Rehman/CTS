@@ -45,3 +45,6 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+/CharonServiceApplication/CharonServiceApplication/bin/Debug/CharonLog.txt
+/CharonServiceApplication/.vs/CharonServiceApplication/v14/.suo
+/CharonServiceApplication/CharonServiceApplication/CharonServiceApplication.csproj.user
