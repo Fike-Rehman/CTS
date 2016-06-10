@@ -1,0 +1,14 @@
+c:\users\frehman\documents\visual studio 2015\Projects\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.exe.config
+c:\users\frehman\documents\visual studio 2015\Projects\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.exe
+c:\users\frehman\documents\visual studio 2015\Projects\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.pdb
+c:\users\frehman\documents\visual studio 2015\Projects\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.csprojResolveAssemblyReference.cache
+c:\users\frehman\documents\visual studio 2015\Projects\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.exe
+c:\users\frehman\documents\visual studio 2015\Projects\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.pdb
+D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.exe.config
+D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.exe
+D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.pdb
+D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\log4net.dll
+D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\log4net.xml
+D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.exe
+D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.pdb
+D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.csprojResolveAssemblyReference.cache

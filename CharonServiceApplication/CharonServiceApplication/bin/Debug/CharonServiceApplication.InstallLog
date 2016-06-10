@@ -1,0 +1,6 @@
+﻿Uninstalling assembly 'D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.InstallLog
+   assemblypath = D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.exe
+No public installers with the RunInstallerAttribute.Yes attribute could be found in the D:\Cosmos Technologies\3_TFS_CHARON\CharonServiceApplication\CharonServiceApplication\bin\Debug\CharonServiceApplication.exe assembly.
