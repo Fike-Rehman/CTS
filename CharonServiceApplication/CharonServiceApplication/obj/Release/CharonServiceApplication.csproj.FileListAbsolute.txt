@@ -1,0 +1,8 @@
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CharonServiceApplication.exe.config
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CharonServiceApplication.exe
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CharonServiceApplication.pdb
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\log4net.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\log4net.xml
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.csprojResolveAssemblyReference.cache
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.exe
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.pdb

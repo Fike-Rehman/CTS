@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading;
 using CharonServiceApplication;
 
@@ -29,17 +30,31 @@ namespace CTS.Charon.CharonApplication
             else
                 _logger.Info($"Started Charon Service in console mode {DateTime.Now}");
 
-            
+
             // Initialize and execute a device Ping to see if our board is online:
-            _pingTask = DevicePingTask.Instance();
+            var deviceIP = string.Empty;
+
+            try
+            {
+               deviceIP = ConfigurationManager.AppSettings["deviceIPAddress"];
+            }
+            catch (ConfigurationErrorsException)
+            {
+                LogMessage("Error Reading Configuration File...");
+            }
+
+            _pingTask = DevicePingTask.Instance(deviceIP);
 
             if (_pingTask.Execute(LogMessage))
             {
+                LogMessage("Device Initialization Success...");
+             
                 // Device initialization succeeded. We can continue with more operations:
                 // set up a timer that sends a ping asynchronously every minute:
-
                 var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute  
                 _pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
+
+                // continue with other tasks:
             }
             else
             {

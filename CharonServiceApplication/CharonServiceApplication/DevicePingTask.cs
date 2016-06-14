@@ -15,21 +15,24 @@ namespace CharonServiceApplication
 
         private static DevicePingTask _instance;
 
-        protected DevicePingTask()
+        protected DevicePingTask(string deviceIP)
         {
-            
+            DeviceIPAddress = deviceIP;
+
         }
 
-        public static DevicePingTask Instance()
+        public static DevicePingTask Instance(string deviceIp)
         {
             // Uses Lazy initialization
-            return _instance ?? (_instance = new DevicePingTask());
+            return _instance ?? (_instance = new DevicePingTask(deviceIp));
         }
 
         #endregion
 
 
         public int NumTries { get; } = 3;
+
+        public static string DeviceIPAddress { get; private set; } = "http://192.168.0.0/";
 
         /// <summary>
         /// Executes a Device Ping. Tries a number of times based on the 
@@ -104,7 +107,7 @@ namespace CharonServiceApplication
             // First send a Ping On:
             Task<string> pingtask =  PingAsync(true);
 
-            progress?.Report("Sending Ping On message to the device...");
+            progress?.Report($"Sending Ping On message to the device. Service Base address: {DeviceIPAddress}...");
 
             var pingResponse = await pingtask;
 
@@ -114,7 +117,7 @@ namespace CharonServiceApplication
                 await Task.Delay(pingdelay);
                 
                 pingtask = PingAsync(false);
-                progress?.Report("Sending Ping OFF message to device...");
+                progress?.Report($"Sending Ping Off message to the device. Service Base Address: {DeviceIPAddress}...");
                 pingResponse = await pingtask;
 
                 progress?.Report(pingResponse == "Success" ? "Ping Complete" : $"Ping Failed! {pingResponse}");
@@ -132,14 +135,15 @@ namespace CharonServiceApplication
         
         private static async Task<string> PingAsync(bool @on)
         {
+            
             var pingResponse = "";
 
-            // TODO: read from config
-            const string baseAddress = "http://192.168.0.200/";
-
+            
+           
+  
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(DeviceIPAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
                // client.Timeout = TimeSpan.FromMilliseconds(10000);
