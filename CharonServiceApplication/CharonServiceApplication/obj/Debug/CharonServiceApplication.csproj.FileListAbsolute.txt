@@ -6,3 +6,5 @@ C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\b
 C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.csprojResolveAssemblyReference.cache
 C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.exe
 C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.pdb
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Debug\Newtonsoft.Json.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Debug\Newtonsoft.Json.xml
