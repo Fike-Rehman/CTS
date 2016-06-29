@@ -34,6 +34,7 @@ namespace CTS.Charon.CharonApplication
             // Initialize and execute a device Ping to see if our board is online:
             var deviceIP = string.Empty;
 
+            
             try
             {
                deviceIP = ConfigurationManager.AppSettings["deviceIPAddress"];
@@ -67,6 +68,17 @@ namespace CTS.Charon.CharonApplication
                 // out an Alert and stop the app:
                 LogMessage("Device is either not online or has mal-functioned.");
                 LogMessage("Sending Alert...");
+
+                var alert = new AlertSender();
+
+                var @address = DevicePingTask.DeviceIPAddress.Substring(7, 13); 
+                var msg =
+                    "Your deivce has failed to respond to Ping request(s) dispatched to address: "+ @address + " after repeated attempts.\r\n" +
+                    $"{Environment.NewLine}Event Date & Time: {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()} {Environment.NewLine}" +
+                    $"{Environment.NewLine}Please check device and make sure that it is still online!";
+
+                if(!alert.SendEmailAlert("Atert: Device Ping Failed", bodyText: msg )) LogMessage("Attempt to send an email alert failed!");
+                if(!alert.SendSMSAlert("Atert: Device Ping Failed", msg)) LogMessage("Attempt to send an SMS alert failed!");
             }
 
 
