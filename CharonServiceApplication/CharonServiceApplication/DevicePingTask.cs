@@ -5,20 +5,34 @@ using System.Threading.Tasks;
 
 namespace CharonServiceApplication
 {
-    // sends a ping to a device every minute to confirm that it is online
-    // Ping is composed by a On request followed by a off request 'n' seconds
-    // later where class needs to be singleton
-    // TODO: make this class singleton
+    // Sends a ping to a device at a certain interval to confirm that it is online
+    // A single Ping is composed of a 'On' request followed by a 'Off' request 'n' seconds
+    // later. 
     internal class DevicePingTask
     {
-        //private readonly int _numTries = 3;
 
-        public void SetUp()
+        #region -- Singleton Pattern: --
+
+        private static DevicePingTask _instance;
+
+        protected DevicePingTask(string deviceIP)
         {
-                
+            DeviceIPAddress = deviceIP;
+
         }
 
+        public static DevicePingTask Instance(string deviceIp)
+        {
+            // Uses Lazy initialization
+            return _instance ?? (_instance = new DevicePingTask(deviceIp));
+        }
+
+        #endregion
+
+
         public int NumTries { get; } = 3;
+
+        public static string DeviceIPAddress { get; private set; } = "http://192.168.0.0/";
 
         /// <summary>
         /// Executes a Device Ping. Tries a number of times based on the 
@@ -48,6 +62,38 @@ namespace CharonServiceApplication
 
 
         /// <summary>
+        /// Executes a Device Ping Asynchronously. Tries a number of times based on the 
+        /// 'NumTries setting' before giving up. 
+        /// </summary>
+        /// <param name="logMessage"></param>
+        /// <returns></returns>
+        public async Task<bool> ExecuteAsync(Action<string> logMessage)
+        {
+            var bSuccess = false;
+
+            var n = 0;
+
+            while (n < NumTries)
+            {
+                n++;
+
+               var pingresponse =  await ExecutePingAsync(new Progress<string>(logMessage));
+
+                if (pingresponse)
+                {
+                    bSuccess = true;
+                    break;
+                }
+                
+            }
+
+            return bSuccess;
+        }
+
+
+        #region -- Helper Methods --
+
+        /// <summary>
         /// Executes a Single Ping on the device with a PingOn request immediately followed by a ping off request. 
         /// Makes the blue LED on the board blink. Ping delay controls how long the LED will stay On. 
         /// Can be called Asynchronously. Reports progress as it executes.
@@ -61,7 +107,7 @@ namespace CharonServiceApplication
             // First send a Ping On:
             Task<string> pingtask =  PingAsync(true);
 
-            progress?.Report("Sending Ping On message to the device...");
+            progress?.Report($"Sending Ping On message to the device. Service Base address: {DeviceIPAddress}...");
 
             var pingResponse = await pingtask;
 
@@ -71,7 +117,7 @@ namespace CharonServiceApplication
                 await Task.Delay(pingdelay);
                 
                 pingtask = PingAsync(false);
-                progress?.Report("Sending Ping OFF message to device...");
+                progress?.Report($"Sending Ping Off message to the device. Service Base Address: {DeviceIPAddress}...");
                 pingResponse = await pingtask;
 
                 progress?.Report(pingResponse == "Success" ? "Ping Complete" : $"Ping Failed! {pingResponse}");
@@ -89,14 +135,15 @@ namespace CharonServiceApplication
         
         private static async Task<string> PingAsync(bool @on)
         {
+            
             var pingResponse = "";
 
-            // TODO: read from config
-            const string baseAddress = "http://192.168.0.200/";
-
+            
+           
+  
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseAddress);
+                client.BaseAddress = new Uri(DeviceIPAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
                // client.Timeout = TimeSpan.FromMilliseconds(10000);
@@ -123,6 +170,8 @@ namespace CharonServiceApplication
                 return pingResponse;
             }               
         }
+
+        #endregion 
 
     }
 }
