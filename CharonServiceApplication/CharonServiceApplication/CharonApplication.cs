@@ -34,10 +34,19 @@ namespace CTS.Charon.CharonApplication
             // Initialize and execute a device Ping to see if our board is online:
             var deviceIP = string.Empty;
 
-            
+            DateTime twelveVoltRelayOnTime;
+            DateTime twelveVoltRelayOffTime;
+            DateTime ACRelayOnTime;
+            DateTime ACRelayOffTime;
+
             try
             {
                deviceIP = ConfigurationManager.AppSettings["deviceIPAddress"];
+
+                twelveVoltRelayOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOnTime"]);
+                twelveVoltRelayOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOffTime"]);
+                ACRelayOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOnTime"]);
+                ACRelayOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOffTime"]);
             }
             catch (ConfigurationErrorsException)
             {
