@@ -1,0 +1,5 @@
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\bin\Debug\CTS.Charon.NetDuinoPlus.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\bin\Debug\CTS.Charon.NetDuinoPlus.pdb
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\obj\Debug\CTS.Charon.NetDuinoPlus.csprojResolveAssemblyReference.cache
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\obj\Debug\CTS.Charon.NetDuinoPlus.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\obj\Debug\CTS.Charon.NetDuinoPlus.pdb

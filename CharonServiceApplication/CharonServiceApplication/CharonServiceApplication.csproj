@@ -74,7 +74,6 @@
     <Compile Include="CharonService.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="DevicePingTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceManager.cs" />
@@ -99,6 +98,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CTS.Charon.NetDuinoPlus\CTS.Charon.Devices.csproj">
+      <Project>{2915e60e-8364-4b42-8a89-0cfc2a57e4a6}</Project>
+      <Name>CTS.Charon.Devices</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

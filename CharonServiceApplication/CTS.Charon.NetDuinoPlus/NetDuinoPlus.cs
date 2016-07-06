@@ -3,36 +3,34 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace CharonServiceApplication
+namespace CTS.Charon.Devices
 {
-    // Sends a ping to a device at a certain interval to confirm that it is online
-    // A single Ping is composed of a 'On' request followed by a 'Off' request 'n' seconds
-    // later. 
-    internal class DevicePingTask
+    public class NetDuinoPlus : IPingTask
     {
-
         #region -- Singleton Pattern: --
 
-        private static DevicePingTask _instance;
+        private static NetDuinoPlus _instance;
 
-        protected DevicePingTask(string deviceIP)
+        protected NetDuinoPlus(string deviceIP)
         {
             DeviceIPAddress = deviceIP;
 
         }
 
-        public static DevicePingTask Instance(string deviceIp)
+        public static NetDuinoPlus Instance(string deviceIp)
         {
             // Uses Lazy initialization
-            return _instance ?? (_instance = new DevicePingTask(deviceIp));
+            return _instance ?? (_instance = new NetDuinoPlus(deviceIp));
         }
 
         #endregion
 
-
         public int NumTries { get; } = 3;
 
         public static string DeviceIPAddress { get; private set; } = "http://192.168.0.0/";
+
+
+        #region IPingTask interface
 
         /// <summary>
         /// Executes a Device Ping. Tries a number of times based on the 
@@ -41,7 +39,7 @@ namespace CharonServiceApplication
         /// </summary>
         /// <param name="logMessage"></param>
         /// <returns></returns>
-        public bool Execute(Action<string> logMessage)
+        public bool ExecutePing(Action<string> logMessage)
         {
             var n = 0;
 
@@ -51,7 +49,7 @@ namespace CharonServiceApplication
 
                 // This will be blocking! It might cause problems if we running in a ASP.NET context
                 https://msdn.microsoft.com/en-us/magazine/jj991977.aspx
-                if (ExecutePingAsync(new Progress<string>(logMessage)).Result)
+                if (ExecuteSinglePingAsync(new Progress<string>(logMessage)).Result)
                 {
                     return true;
                 }
@@ -60,14 +58,13 @@ namespace CharonServiceApplication
             return false;
         }
 
-
         /// <summary>
         /// Executes a Device Ping Asynchronously. Tries a number of times based on the 
         /// 'NumTries setting' before giving up. 
         /// </summary>
         /// <param name="logMessage"></param>
         /// <returns></returns>
-        public async Task<bool> ExecuteAsync(Action<string> logMessage)
+        public async Task<bool> ExecutePingAsync(Action<string> logMessage)
         {
             var bSuccess = false;
 
@@ -77,18 +74,20 @@ namespace CharonServiceApplication
             {
                 n++;
 
-               var pingresponse =  await ExecutePingAsync(new Progress<string>(logMessage));
+                var pingresponse = await ExecuteSinglePingAsync(new Progress<string>(logMessage));
 
                 if (pingresponse)
                 {
                     bSuccess = true;
                     break;
                 }
-                
+
             }
 
             return bSuccess;
         }
+
+        #endregion
 
 
         #region -- Helper Methods --
@@ -101,11 +100,11 @@ namespace CharonServiceApplication
         /// <param name="progress">progress object to report on the progress</param>
         /// <param name="pingdelay">delay between ping on and ping Off (milliseconds)</param>
         /// <returns></returns>
-        private static async Task<bool> ExecutePingAsync(IProgress<string> progress, int pingdelay = 2000 )
+        private static async Task<bool> ExecuteSinglePingAsync(IProgress<string> progress, int pingdelay = 2000)
         {
             var bSuccess = false;
             // First send a Ping On:
-            Task<string> pingtask =  PingAsync(true);
+            Task<string> pingtask = PingAsync(true);
 
             progress?.Report($"Sending Ping On message to the device. Service Base address: {DeviceIPAddress}...");
 
@@ -115,7 +114,7 @@ namespace CharonServiceApplication
             {
                 // wait for few seconds and send a ping Off
                 await Task.Delay(pingdelay);
-                
+
                 pingtask = PingAsync(false);
                 progress?.Report($"Sending Ping Off message to the device. Service Base Address: {DeviceIPAddress}...");
                 pingResponse = await pingtask;
@@ -132,21 +131,17 @@ namespace CharonServiceApplication
             return bSuccess;
         }
 
-        
+
         private static async Task<string> PingAsync(bool @on)
         {
-            
             var pingResponse = "";
 
-            
-           
-  
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(DeviceIPAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
-               // client.Timeout = TimeSpan.FromMilliseconds(10000);
+                // client.Timeout = TimeSpan.FromMilliseconds(10000);
 
                 try
                 {
@@ -165,13 +160,14 @@ namespace CharonServiceApplication
                     // the request takes longer than 10 secs, it is timed out
                     pingResponse = x.Message;
                 }
-               
+
 
                 return pingResponse;
-            }               
+            }
         }
 
         #endregion 
 
     }
+
 }

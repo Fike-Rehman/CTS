@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Threading;
 using CharonServiceApplication;
+using CTS.Charon.Devices;
 
 
 namespace CTS.Charon.CharonApplication
@@ -14,7 +15,7 @@ namespace CTS.Charon.CharonApplication
                  log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly Timer _pingtimer;
-        private readonly DevicePingTask _pingTask;
+        private readonly NetDuinoPlus _netDuino; 
 
 
         public CharonApplication(bool consoleMode)
@@ -53,9 +54,9 @@ namespace CTS.Charon.CharonApplication
                 LogMessage("Error Reading Configuration File...");
             }
 
-            _pingTask = DevicePingTask.Instance(deviceIP);
+            _netDuino = NetDuinoPlus.Instance(deviceIP);
 
-            if (_pingTask.Execute(LogMessage))
+            if (_netDuino.ExecutePing(LogMessage))
             {
                 LogMessage("Device Initialization Success...");
              
@@ -71,7 +72,7 @@ namespace CTS.Charon.CharonApplication
                 // introduce a delay to give it a chance to report the progress:
                 Thread.Sleep(1000);
 
-                LogMessage($"Device Ping Failed after {_pingTask.NumTries} attempts");
+                LogMessage($"Device Ping Failed after {_netDuino.NumTries} attempts");
 
                 // There is not much point in continuing on at this point. Just send
                 // out an Alert and stop the app:
@@ -80,14 +81,19 @@ namespace CTS.Charon.CharonApplication
 
                 var alert = new AlertSender();
 
-                var @address = DevicePingTask.DeviceIPAddress.Substring(7, 13); 
+                var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13); 
                 var msg =
                     "Your deivce has failed to respond to Ping request(s) dispatched to address: "+ @address + " after repeated attempts.\r\n" +
                     $"{Environment.NewLine}Event Date & Time: {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()} {Environment.NewLine}" +
                     $"{Environment.NewLine}Please check device and make sure that it is still online!";
 
-                if(!alert.SendEmailAlert("Atert: Device Ping Failed", bodyText: msg )) LogMessage("Attempt to send an email alert failed!");
-                if(!alert.SendSMSAlert("Atert: Device Ping Failed", msg)) LogMessage("Attempt to send an SMS alert failed!");
+                LogMessage(alert.SendEmailAlert("Atert: Device Ping Failed", bodyText: msg)
+                    ? "Alert dispatch via Email completed successfully"
+                    : "Attempt to send an email alert failed!");
+
+                LogMessage(alert.SendSMSAlert("Atert: Device Ping Failed", bodyText: msg)
+                    ? "Alert dispatch via SMS completed successfully"
+                    : "Attempt to send an SMS alert failed!");
             }
 
 
@@ -105,7 +111,7 @@ namespace CTS.Charon.CharonApplication
         {
             // send a ping asynchronously and reset the timer
 
-            await _pingTask.ExecuteAsync(LogMessage);
+            await _netDuino.ExecutePingAsync(LogMessage);
 
             var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute
             _pingtimer.Change(pingInterval, Timeout.InfiniteTimeSpan);
