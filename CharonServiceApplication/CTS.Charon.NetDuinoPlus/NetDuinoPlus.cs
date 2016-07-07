@@ -29,6 +29,9 @@ namespace CTS.Charon.Devices
 
         public static string DeviceIPAddress { get; private set; } = "http://192.168.0.0/";
 
+        public static bool IsRelay1Energized { get; private set; } = false;
+
+        public static bool IsRelay2Energized { get; private set; } = false;
 
         #region IPingTask interface
 
@@ -89,6 +92,133 @@ namespace CTS.Charon.Devices
 
         #endregion
 
+
+        public static async Task<string> EnergizeRelay1()
+        {
+            var response = "";
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(DeviceIPAddress);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+
+                try
+                {
+                    var res =
+                        await client.GetAsync("EnergizeR1");
+                                
+                    if (res.IsSuccessStatusCode)
+                    {
+                        IsRelay1Energized = true;
+                        response = "Success";
+                    }
+
+                }
+                catch (Exception x)
+                {
+                    // the request takes longer than 10 secs, it is timed out
+                    response = x.Message;
+                }
+
+                return response;
+            }
+        }
+
+        public static async Task<string> DenergizeRelay1()
+        {
+            var response = "";
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(DeviceIPAddress);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+
+                try
+                {
+                    var res =
+                        await client.GetAsync("DenergizeR1");
+
+                    if (res.IsSuccessStatusCode)
+                    {
+                        IsRelay1Energized = false;
+                        response = "Success";
+                    }
+
+                }
+                catch (Exception x)
+                {
+                    // the request takes longer than 10 secs, it is timed out
+                    response = x.Message;
+                }
+
+                return response;
+            }
+        }
+
+        public static async Task<string> EnergizeRelay2()
+        {
+            var response = "";
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(DeviceIPAddress);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+
+                try
+                {
+                    var res =
+                        await client.GetAsync("EnergizeR2");
+
+                    if (res.IsSuccessStatusCode)
+                    {
+                        IsRelay2Energized = true;
+                        response = "Success";
+                    }
+                }
+                catch (Exception x)
+                {
+                    // the request takes longer than 10 secs, it is timed out
+                    response = x.Message;
+                }
+
+                return response;
+            }
+        }
+
+        public static async Task<string> DenergizeRelay2()
+        {
+            var response = "";
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(DeviceIPAddress);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+
+                try
+                {
+                    var res =
+                        await client.GetAsync("DenergizeR2");
+
+                    if (res.IsSuccessStatusCode)
+                    {
+                        IsRelay2Energized = false;
+                        response = "Success";
+                    }
+
+                }
+                catch (Exception x)
+                {
+                    // the request takes longer than 10 secs, it is timed out
+                    response = x.Message;
+                }
+
+                return response;
+            }
+        }
 
         #region -- Helper Methods --
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using CharonServiceApplication;
 using CTS.Charon.Devices;
 
@@ -9,13 +11,18 @@ namespace CTS.Charon.CharonApplication
 {
     internal class CharonApplication
     {
-        private readonly bool _consoleMode;
+        private static bool _consoleMode;
 
         private static readonly log4net.ILog _logger =
                  log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly Timer _pingtimer;
-        private readonly NetDuinoPlus _netDuino; 
+        private static Timer _changeStateR1Timer;
+
+        private readonly NetDuinoPlus _netDuino;
+
+        private static DateTime _DCBusOnTime;
+        private static DateTime _DCBusOffTime;
 
 
         public CharonApplication(bool consoleMode)
@@ -35,19 +42,19 @@ namespace CTS.Charon.CharonApplication
             // Initialize and execute a device Ping to see if our board is online:
             var deviceIP = string.Empty;
 
-            DateTime twelveVoltRelayOnTime;
-            DateTime twelveVoltRelayOffTime;
-            DateTime ACRelayOnTime;
-            DateTime ACRelayOffTime;
+        //    DateTime twelveVoltBusOnTime = new DateTime();
+        //   DateTime twelveVoltBusOffTime = new DateTime();
+            DateTime ACBusOnTime = new DateTime();
+            DateTime ACBusOffTime = new DateTime();
 
             try
             {
                deviceIP = ConfigurationManager.AppSettings["deviceIPAddress"];
 
-                twelveVoltRelayOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOnTime"]);
-                twelveVoltRelayOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOffTime"]);
-                ACRelayOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOnTime"]);
-                ACRelayOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOffTime"]);
+                _DCBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOnTime"]);
+                _DCBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOffTime"]);
+                ACBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOnTime"]);
+                ACBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOffTime"]);
             }
             catch (ConfigurationErrorsException)
             {
@@ -65,7 +72,9 @@ namespace CTS.Charon.CharonApplication
                 var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute  
                 _pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
 
-                // continue with other tasks:
+                // we set the R1 state synchronously at first
+                 SetNetDuinoRelay1();
+
             }
             else
             {
@@ -81,9 +90,10 @@ namespace CTS.Charon.CharonApplication
 
                 var alert = new AlertSender();
 
-                var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13); 
+                var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13);
+
                 var msg =
-                    "Your deivce has failed to respond to Ping request(s) dispatched to address: "+ @address + " after repeated attempts.\r\n" +
+                    "Your device has failed to respond to Ping request(s) dispatched to address: "+ @address + " after repeated attempts.\r\n" +
                     $"{Environment.NewLine}Event Date & Time: {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()} {Environment.NewLine}" +
                     $"{Environment.NewLine}Please check device and make sure that it is still online!";
 
@@ -91,7 +101,7 @@ namespace CTS.Charon.CharonApplication
                     ? "Alert dispatch via Email completed successfully"
                     : "Attempt to send an email alert failed!");
 
-                LogMessage(alert.SendSMSAlert("Atert: Device Ping Failed", bodyText: msg)
+                LogMessage(alert.SendSMSAlert("Atert: Device Ping Failed", msg)
                     ? "Alert dispatch via SMS completed successfully"
                     : "Attempt to send an SMS alert failed!");
             }
@@ -107,6 +117,78 @@ namespace CTS.Charon.CharonApplication
             Stop();
         }
 
+        /// <summary>
+        /// Sends commands to set the current state of the NetDuino Relay R1 based on the given onTime and offTime
+        /// values.
+        /// </summary>
+        /// <returns> returns a TimeSpan that tells us when we need to call this method again</returns>
+        private static async Task<TimeSpan> SetNetDuinoRelay1()
+        {
+            string result;
+            var onTime = _DCBusOnTime;
+            var offTime = _DCBusOffTime;
+
+            Debug.Assert(onTime < offTime);
+
+            // interval remaining for next state change trigger
+            TimeSpan stateChangeInterval;
+            
+            if(DateTime.Now.TimeOfDay < onTime.TimeOfDay)
+            {
+                // we are in daytime
+                // energize the relay 1 to turn lights off and set the interval for next state change
+                result = await NetDuinoPlus.EnergizeRelay1();
+                stateChangeInterval = onTime.TimeOfDay - DateTime.Now.TimeOfDay;
+            }
+            else if (DateTime.Now.TimeOfDay >= onTime.TimeOfDay && DateTime.Now.TimeOfDay <= offTime.TimeOfDay)
+            {
+                // we are in the onTime..
+                // de-energize relay1 to turn the lights on and set then to turn off at offTime
+                result = await NetDuinoPlus.DenergizeRelay1();
+                stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
+            }
+            else
+            {
+                // Current time is between OffTime and midnight
+                // energize the relays to turn the light off and set the interval to onTime + 1 Day
+                result = await NetDuinoPlus.EnergizeRelay1();
+                stateChangeInterval = (new TimeSpan(1,0,0,0) + onTime.TimeOfDay) - DateTime.Now.TimeOfDay;
+            }
+
+            if (result == "Success")
+            {
+                if (_changeStateR1Timer == null)
+                {
+                    //This is the first time this method is executed
+                    // set up the timer to trigger next time the Relay state change is needed: 
+                    _changeStateR1Timer = new Timer(OnChangeStateR1Timer, null, stateChangeInterval, Timeout.InfiniteTimeSpan);
+                }
+            }
+            else
+            {
+                // here we deal with failure...
+                stateChangeInterval = TimeSpan.MinValue;
+                
+                var alert = new AlertSender();
+                var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13);
+
+                var msg =
+                    "Netduino has failed to respond to Energize/Denergize relay R1 request(s) dispatched to address: " + @address + "in a timely fashion" +
+                    $"{Environment.NewLine}Event Date & Time: {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()} {Environment.NewLine}" +
+                    $"{Environment.NewLine}Please check Netduino and make sure that it is still online!";
+
+                LogMessage(alert.SendEmailAlert("Atert: Energize/Denergize Relay request to NetDuino Failed", bodyText: msg)
+                    ? "Alert dispatch via Email completed successfully"
+                    : "Attempt to send an email alert failed!");
+
+                LogMessage(alert.SendSMSAlert("Atert: Energize/Denergize Relay request to NetDuino Failed", msg)
+                    ? "Alert dispatch via SMS completed successfully"
+                    : "Attempt to send an SMS alert failed!");
+            }
+            
+            return stateChangeInterval;
+        }
+
         private async void OnPingTimer(object state)
         {
             // send a ping asynchronously and reset the timer
@@ -117,8 +199,18 @@ namespace CTS.Charon.CharonApplication
             _pingtimer.Change(pingInterval, Timeout.InfiniteTimeSpan);
         }
 
+        private static async void OnChangeStateR1Timer(object state)
+        {
+           var stateChangeInterval =  await SetNetDuinoRelay1();
+
+            if (stateChangeInterval > TimeSpan.MinValue)
+            {
+                _changeStateR1Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
+            }
+        }
+
         
-        private void LogMessage(string msg )
+        private static void LogMessage(string msg )
         {
             if (_consoleMode)
             {
