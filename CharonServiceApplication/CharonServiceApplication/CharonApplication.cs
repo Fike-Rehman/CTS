@@ -19,12 +19,15 @@ namespace CTS.Charon.CharonApplication
         private readonly Timer _pingtimer;
         private static Timer _changeStateR1Timer;
 
+        // TODO: inject this as dependency
         private readonly NetDuinoPlus _netDuino;
 
+        //TODO abstract these out to a class or interface
         private static DateTime _DCBusOnTime;
         private static DateTime _DCBusOffTime;
 
 
+        // TODO: re-factor this to smaller method
         public CharonApplication(bool consoleMode)
         {
             _consoleMode = consoleMode;
@@ -42,19 +45,12 @@ namespace CTS.Charon.CharonApplication
             // Initialize and execute a device Ping to see if our board is online:
             var deviceIP = string.Empty;
 
-        //    DateTime twelveVoltBusOnTime = new DateTime();
-        //   DateTime twelveVoltBusOffTime = new DateTime();
-            DateTime ACBusOnTime = new DateTime();
-            DateTime ACBusOffTime = new DateTime();
-
             try
             {
                deviceIP = ConfigurationManager.AppSettings["deviceIPAddress"];
 
-                _DCBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOnTime"]);
-                _DCBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOffTime"]);
-                ACBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOnTime"]);
-                ACBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOffTime"]);
+               _DCBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOnTime"]);
+               _DCBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOffTime"]);             
             }
             catch (ConfigurationErrorsException)
             {
@@ -63,18 +59,18 @@ namespace CTS.Charon.CharonApplication
 
             _netDuino = NetDuinoPlus.Instance(deviceIP);
 
+
             if (_netDuino.ExecutePing(LogMessage))
             {
                 LogMessage("Device Initialization Success...");
-             
+
                 // Device initialization succeeded. We can continue with more operations:
                 // set up a timer that sends a ping asynchronously every minute:
                 var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute  
                 _pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
 
                 // we set the R1 state synchronously at first
-                 SetNetDuinoRelay1();
-
+                SetNetDuinoRelay1();      
             }
             else
             {
@@ -93,7 +89,7 @@ namespace CTS.Charon.CharonApplication
                 var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13);
 
                 var msg =
-                    "Your device has failed to respond to Ping request(s) dispatched to address: "+ @address + " after repeated attempts.\r\n" +
+                    "Your device has failed to respond to Ping request(s) dispatched to address: " + @address + " after repeated attempts.\r\n" +
                     $"{Environment.NewLine}Event Date & Time: {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()} {Environment.NewLine}" +
                     $"{Environment.NewLine}Please check device and make sure that it is still online!";
 
@@ -128,9 +124,13 @@ namespace CTS.Charon.CharonApplication
             var onTime = _DCBusOnTime;
             var offTime = _DCBusOffTime;
 
+            const bool bTesting = true;
+
+            var alert = new AlertSender();
+
             Debug.Assert(onTime < offTime);
 
-            // interval remaining for next state change trigger
+            // time to wait for next state change trigger
             TimeSpan stateChangeInterval;
             
             if(DateTime.Now.TimeOfDay < onTime.TimeOfDay)
@@ -139,6 +139,10 @@ namespace CTS.Charon.CharonApplication
                 // energize the relay 1 to turn lights off and set the interval for next state change
                 result = await NetDuinoPlus.EnergizeRelay1();
                 stateChangeInterval = onTime.TimeOfDay - DateTime.Now.TimeOfDay;
+                if (bTesting)
+                {
+                    alert.SendSMSAlert("Charon Alert", $"DC Bus was turned off at {DateTime.Now.ToLongTimeString()}");
+                }
             }
             else if (DateTime.Now.TimeOfDay >= onTime.TimeOfDay && DateTime.Now.TimeOfDay <= offTime.TimeOfDay)
             {
@@ -146,6 +150,10 @@ namespace CTS.Charon.CharonApplication
                 // de-energize relay1 to turn the lights on and set then to turn off at offTime
                 result = await NetDuinoPlus.DenergizeRelay1();
                 stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
+                if (bTesting)
+                {
+                    alert.SendSMSAlert("Charon Alert", $"DC Bus was turned on at {DateTime.Now.ToLongTimeString()}");
+                }
             }
             else
             {
@@ -153,6 +161,10 @@ namespace CTS.Charon.CharonApplication
                 // energize the relays to turn the light off and set the interval to onTime + 1 Day
                 result = await NetDuinoPlus.EnergizeRelay1();
                 stateChangeInterval = (new TimeSpan(1,0,0,0) + onTime.TimeOfDay) - DateTime.Now.TimeOfDay;
+                if (bTesting)
+                {
+                    alert.SendSMSAlert("Charon Alert", $"DC Bus was turned off at {DateTime.Now.ToLongTimeString()}");
+                }
             }
 
             if (result == "Success")
@@ -166,10 +178,10 @@ namespace CTS.Charon.CharonApplication
             }
             else
             {
-                // here we deal with failure...
+                // here we deal with the failure...
+                // set the TimeSpan to min value to return an indication of failure and log appropriate messages and alerts
                 stateChangeInterval = TimeSpan.MinValue;
                 
-                var alert = new AlertSender();
                 var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13);
 
                 var msg =
@@ -243,6 +255,5 @@ namespace CTS.Charon.CharonApplication
                 _logger.Info("Stopping Charon Service Application");
             } 
         }
-
     }
 }
