@@ -8,3 +8,15 @@ C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\o
 C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.pdb
 C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\Newtonsoft.Json.dll
 C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\Newtonsoft.Json.xml
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CharonServiceApplication.exe.config
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CharonServiceApplication.exe
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CharonServiceApplication.pdb
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CTS.Charon.Devices.dll
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\log4net.dll
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\Newtonsoft.Json.dll
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CTS.Charon.Devices.pdb
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\log4net.xml
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\Newtonsoft.Json.xml
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.csprojResolveAssemblyReference.cache
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.exe
+D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.pdb

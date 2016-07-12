@@ -1,0 +1,8 @@
+﻿Charon Service Application Release Notes:
+
+Dated: July 7th, 2016
+
+Release: 1.0.1
+
+  - Continously pings Netduino Board at one minute interval. Ping requests are represented by the blinking on-board LED
+  - Turns on/Off the DCBus at the configured times set in the configuration file.
