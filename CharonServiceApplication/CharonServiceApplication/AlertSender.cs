@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace CharonServiceApplication
 {
+    // TODO: Move this class to 'Utilities' assembly
     // Sends an alert (either via email or text message
     class AlertSender
     {
