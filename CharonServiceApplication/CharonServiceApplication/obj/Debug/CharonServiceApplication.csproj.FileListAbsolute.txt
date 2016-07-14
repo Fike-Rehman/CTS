@@ -22,3 +22,5 @@ D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Debug\Newtonsof
 D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.csprojResolveAssemblyReference.cache
 D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.exe
 D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Debug\CharonServiceApplication.pdb
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Debug\CTS.Utilities.AlertSender.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Debug\CTS.Utilities.AlertSender.pdb

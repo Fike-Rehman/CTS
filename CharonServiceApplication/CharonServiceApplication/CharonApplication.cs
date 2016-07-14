@@ -3,8 +3,8 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using CharonServiceApplication;
 using CTS.Charon.Devices;
+using CTS.Utilities.AlertSender;
 
 
 namespace CTS.Charon.CharonApplication
@@ -274,6 +274,8 @@ namespace CTS.Charon.CharonApplication
             return stateChangeInterval;
         }
 
+        #region Timer event Handler methods
+
         private async void OnPingTimer(object state)
         {
             // send a ping asynchronously and reset the timer
@@ -303,6 +305,8 @@ namespace CTS.Charon.CharonApplication
                 _changeStateR2Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
             }
         }
+
+        #endregion
 
 
         private static void LogMessage(string msg )

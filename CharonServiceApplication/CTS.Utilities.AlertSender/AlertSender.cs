@@ -3,11 +3,16 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
-namespace CharonServiceApplication
+namespace CTS.Utilities.AlertSender
 {
-    // TODO: Move this class to 'Utilities' assembly
-    // Sends an alert (either via email or text message
-    class AlertSender
+
+
+    /// <summary>
+    /// Sends an alert (either via email or text message) using the elastic email API
+    /// Follow the link for more details: 
+    // https://elasticemail.com/api-documentation
+    /// </summary>
+    public class AlertSender
     {
         // Elastic email API settings:
         private const string USERNAME = "fike.rehman@hotmail.com";
@@ -67,7 +72,7 @@ namespace CharonServiceApplication
 
                 if (result["success"].ToString() == "True")
                     success = true;
-                
+
                 return success;
             }
         }

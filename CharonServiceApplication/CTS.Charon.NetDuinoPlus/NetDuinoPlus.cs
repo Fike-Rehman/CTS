@@ -93,6 +93,8 @@ namespace CTS.Charon.Devices
         #endregion
 
 
+        #region Relay Control Methods
+
         public static async Task<string> EnergizeRelay1()
         {
             var response = "";
@@ -219,6 +221,9 @@ namespace CTS.Charon.Devices
                 return response;
             }
         }
+
+        #endregion
+
 
         #region -- Helper Methods --
 

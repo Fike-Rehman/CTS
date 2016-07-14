@@ -53,10 +53,6 @@
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -69,7 +65,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlertSender.cs" />
     <Compile Include="CharonApplication.cs" />
     <Compile Include="CharonService.cs">
       <SubType>Component</SubType>
@@ -103,6 +98,10 @@
     <ProjectReference Include="..\CTS.Charon.NetDuinoPlus\CTS.Charon.Devices.csproj">
       <Project>{2915e60e-8364-4b42-8a89-0cfc2a57e4a6}</Project>
       <Name>CTS.Charon.Devices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CTS.Utilities.AlertSender\CTS.Utilities.AlertSender.csproj">
+      <Project>{dca0d1f3-12d6-4e13-81e2-7d3d78bacf95}</Project>
+      <Name>CTS.Utilities.AlertSender</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
