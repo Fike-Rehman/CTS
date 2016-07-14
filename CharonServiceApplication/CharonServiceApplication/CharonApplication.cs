@@ -18,6 +18,7 @@ namespace CTS.Charon.CharonApplication
 
         private readonly Timer _pingtimer;
         private static Timer _changeStateR1Timer;
+        private static Timer _changeStateR2Timer;
 
         // TODO: inject this as dependency
         private readonly NetDuinoPlus _netDuino;
@@ -25,6 +26,9 @@ namespace CTS.Charon.CharonApplication
         //TODO abstract these out to a class or interface
         private static DateTime _DCBusOnTime;
         private static DateTime _DCBusOffTime;
+
+        private static DateTime _ACBusOnTime;
+        private static DateTime _ACBusOffTime;
 
 
         // TODO: re-factor this to smaller method
@@ -49,8 +53,11 @@ namespace CTS.Charon.CharonApplication
             {
                deviceIP = ConfigurationManager.AppSettings["deviceIPAddress"];
 
-               _DCBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOnTime"]);
-               _DCBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["12vRelayOffTime"]);             
+               _DCBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DCRelayOnTime"]);
+               _DCBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DCRelayOffTime"]);
+
+               _ACBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOnTime"]);
+               _ACBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOffTime"]);
             }
             catch (ConfigurationErrorsException)
             {
@@ -69,8 +76,8 @@ namespace CTS.Charon.CharonApplication
                 var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute  
                 _pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
 
-                // we set the R1 state synchronously at first
-                SetNetDuinoRelay1();      
+                // we set the relay states synchronously at first:
+               SetNetDuinoRelaysAsync();
             }
             else
             {
@@ -113,18 +120,22 @@ namespace CTS.Charon.CharonApplication
             Stop();
         }
 
+        private static async void SetNetDuinoRelaysAsync()
+        {
+            await SetNetDuinoDCRelay();
+            await SetNetDuinoACRelay();
+        }
+
         /// <summary>
-        /// Sends commands to set the current state of the NetDuino Relay R1 based on the given onTime and offTime
-        /// values.
+        /// Sends commands to set the current state of the NetDuino Relay R1 (DC Relay) based on the 
+        /// configured OnTime and OffTime values
         /// </summary>
         /// <returns> returns a TimeSpan that tells us when we need to call this method again</returns>
-        private static async Task<TimeSpan> SetNetDuinoRelay1()
+        private static async Task<TimeSpan> SetNetDuinoDCRelay()
         {
             string result;
             var onTime = _DCBusOnTime;
             var offTime = _DCBusOffTime;
-
-            const bool bTesting = true;
 
             var alert = new AlertSender();
 
@@ -139,10 +150,6 @@ namespace CTS.Charon.CharonApplication
                 // energize the relay 1 to turn lights off and set the interval for next state change
                 result = await NetDuinoPlus.EnergizeRelay1();
                 stateChangeInterval = onTime.TimeOfDay - DateTime.Now.TimeOfDay;
-                if (bTesting)
-                {
-                    alert.SendSMSAlert("Charon Alert", $"DC Bus was turned off at {DateTime.Now.ToLongTimeString()}");
-                }
             }
             else if (DateTime.Now.TimeOfDay >= onTime.TimeOfDay && DateTime.Now.TimeOfDay <= offTime.TimeOfDay)
             {
@@ -150,10 +157,6 @@ namespace CTS.Charon.CharonApplication
                 // de-energize relay1 to turn the lights on and set then to turn off at offTime
                 result = await NetDuinoPlus.DenergizeRelay1();
                 stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
-                if (bTesting)
-                {
-                    alert.SendSMSAlert("Charon Alert", $"DC Bus was turned on at {DateTime.Now.ToLongTimeString()}");
-                }
             }
             else
             {
@@ -161,10 +164,6 @@ namespace CTS.Charon.CharonApplication
                 // energize the relays to turn the light off and set the interval to onTime + 1 Day
                 result = await NetDuinoPlus.EnergizeRelay1();
                 stateChangeInterval = (new TimeSpan(1,0,0,0) + onTime.TimeOfDay) - DateTime.Now.TimeOfDay;
-                if (bTesting)
-                {
-                    alert.SendSMSAlert("Charon Alert", $"DC Bus was turned off at {DateTime.Now.ToLongTimeString()}");
-                }
             }
 
             if (result == "Success")
@@ -185,7 +184,7 @@ namespace CTS.Charon.CharonApplication
                 var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13);
 
                 var msg =
-                    "Netduino has failed to respond to Energize/Denergize relay R1 request(s) dispatched to address: " + @address + "in a timely fashion" +
+                    "Netduino has failed to respond to Energize/Denergize DC relay request(s) dispatched to address: " + @address + "in a timely fashion" +
                     $"{Environment.NewLine}Event Date & Time: {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()} {Environment.NewLine}" +
                     $"{Environment.NewLine}Please check Netduino and make sure that it is still online!";
 
@@ -201,6 +200,80 @@ namespace CTS.Charon.CharonApplication
             return stateChangeInterval;
         }
 
+        /// <summary>
+        /// Sends commands to set the current state of the NetDuino Relay R2 (AC Relay) based on the 
+        /// configured OnTime and OffTime values
+        /// </summary>
+        /// <returns> returns a TimeSpan that tells us when we need to call this method again</returns>
+        private static async Task<TimeSpan> SetNetDuinoACRelay()
+        {
+            string result;
+            var onTime = _ACBusOnTime;
+            var offTime = _ACBusOffTime;
+
+            var alert = new AlertSender();
+
+            Debug.Assert(onTime < offTime);
+
+            // time to wait for next state change trigger
+            TimeSpan stateChangeInterval;
+
+            if (DateTime.Now.TimeOfDay < onTime.TimeOfDay)
+            {
+                // we are in daytime
+                // energize the relay 1 to turn lights off and set the interval for next state change
+                result = await NetDuinoPlus.EnergizeRelay2();
+                stateChangeInterval = onTime.TimeOfDay - DateTime.Now.TimeOfDay;
+            }
+            else if (DateTime.Now.TimeOfDay >= onTime.TimeOfDay && DateTime.Now.TimeOfDay <= offTime.TimeOfDay)
+            {
+                // we are in the onTime..
+                // de-energize relay1 to turn the lights on and set then to turn off at offTime
+                result = await NetDuinoPlus.DenergizeRelay2();
+                stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
+            }
+            else
+            {
+                // Current time is between OffTime and midnight
+                // energize the relays to turn the light off and set the interval to onTime + 1 Day
+                result = await NetDuinoPlus.EnergizeRelay2();
+                stateChangeInterval = (new TimeSpan(1, 0, 0, 0) + onTime.TimeOfDay) - DateTime.Now.TimeOfDay;
+            }
+
+            if (result == "Success")
+            {
+                if (_changeStateR2Timer == null)
+                {
+                    //This is the first time this method is executed
+                    // set up the timer to trigger next time the Relay state change is needed: 
+                    _changeStateR2Timer = new Timer(OnChangeStateR2Timer, null, stateChangeInterval, Timeout.InfiniteTimeSpan);
+                }
+            }
+            else
+            {
+                // here we deal with the failure...
+                // set the TimeSpan to min value to return an indication of failure and log appropriate messages and alerts
+                stateChangeInterval = TimeSpan.MinValue;
+
+                var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13);
+
+                var msg =
+                    "Netduino has failed to respond to Energize/Denergize AC relay request(s) dispatched to address: " + @address + "in a timely fashion" +
+                    $"{Environment.NewLine}Event Date & Time: {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()} {Environment.NewLine}" +
+                    $"{Environment.NewLine}Please check Netduino and make sure that it is still online!";
+
+                LogMessage(alert.SendEmailAlert("Atert: Energize/Denergize AC Relay request to NetDuino Failed", bodyText: msg)
+                    ? "Alert dispatch via Email completed successfully"
+                    : "Attempt to send an email alert failed!");
+
+                LogMessage(alert.SendSMSAlert("Atert: Energize/Denergize Relay request to NetDuino Failed", msg)
+                    ? "Alert dispatch via SMS completed successfully"
+                    : "Attempt to send an SMS alert failed!");
+            }
+
+            return stateChangeInterval;
+        }
+
         private async void OnPingTimer(object state)
         {
             // send a ping asynchronously and reset the timer
@@ -213,7 +286,7 @@ namespace CTS.Charon.CharonApplication
 
         private static async void OnChangeStateR1Timer(object state)
         {
-           var stateChangeInterval =  await SetNetDuinoRelay1();
+           var stateChangeInterval =  await SetNetDuinoDCRelay();
 
             if (stateChangeInterval > TimeSpan.MinValue)
             {
@@ -221,7 +294,17 @@ namespace CTS.Charon.CharonApplication
             }
         }
 
-        
+        private static async void OnChangeStateR2Timer(object state)
+        {
+            var stateChangeInterval = await SetNetDuinoACRelay();
+
+            if (stateChangeInterval > TimeSpan.MinValue)
+            {
+                _changeStateR2Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
+            }
+        }
+
+
         private static void LogMessage(string msg )
         {
             if (_consoleMode)
