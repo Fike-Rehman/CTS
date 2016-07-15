@@ -3,10 +3,8 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
-namespace CTS.Utilities.AlertSender
+namespace CTS.Common.Utilities
 {
-
-
     /// <summary>
     /// Sends an alert (either via email or text message) using the elastic email API
     /// Follow the link for more details: 

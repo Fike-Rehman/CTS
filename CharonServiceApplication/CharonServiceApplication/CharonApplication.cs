@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using CTS.Charon.Devices;
-using CTS.Utilities.AlertSender;
+using CTS.Common.Utilities;
 
 
 namespace CTS.Charon.CharonApplication
@@ -23,11 +23,10 @@ namespace CTS.Charon.CharonApplication
         // TODO: inject this as dependency
         private readonly NetDuinoPlus _netDuino;
 
-        //TODO abstract these out to a class or interface
-        private static DateTime _DCBusOnTime;
+       
+        private static int _DCBusOnTimeOffset;
         private static DateTime _DCBusOffTime;
-
-        private static DateTime _ACBusOnTime;
+        private static int _ACBusOnTimeOffset;
         private static DateTime _ACBusOffTime;
 
 
@@ -46,17 +45,17 @@ namespace CTS.Charon.CharonApplication
                 _logger.Info($"Started Charon Service in console mode {DateTime.Now}");
 
 
-            // Initialize and execute a device Ping to see if our board is online:
+            // Read in the configurtion:
             var deviceIP = string.Empty;
 
             try
             {
                deviceIP = ConfigurationManager.AppSettings["deviceIPAddress"];
 
-               _DCBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DCRelayOnTime"]);
+               _DCBusOnTimeOffset = Convert.ToInt16(ConfigurationManager.AppSettings["DCRelayOnTimeOffest"]);
                _DCBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DCRelayOffTime"]);
 
-               _ACBusOnTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOnTime"]);
+               _ACBusOnTimeOffset = Convert.ToInt16(ConfigurationManager.AppSettings["DCRelayOnTimeOffest"]);
                _ACBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOffTime"]);
             }
             catch (ConfigurationErrorsException)
@@ -64,8 +63,8 @@ namespace CTS.Charon.CharonApplication
                 LogMessage("Error Reading Configuration File...");
             }
 
+            // Initialize and execute a device Ping to see if our board is online:
             _netDuino = NetDuinoPlus.Instance(deviceIP);
-
 
             if (_netDuino.ExecutePing(LogMessage))
             {
@@ -76,7 +75,7 @@ namespace CTS.Charon.CharonApplication
                 var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute  
                 _pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
 
-                // we set the relay states synchronously at first:
+                // Start with setting up the netDuino relays:
                SetNetDuinoRelaysAsync();
             }
             else
@@ -91,7 +90,7 @@ namespace CTS.Charon.CharonApplication
                 LogMessage("Device is either not online or has mal-functioned.");
                 LogMessage("Sending Alert...");
 
-                var alert = new AlertSender();
+                var alert = new  AlertSender();
 
                 var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13);
 
@@ -134,12 +133,21 @@ namespace CTS.Charon.CharonApplication
         private static async Task<TimeSpan> SetNetDuinoDCRelay()
         {
             string result;
-            var onTime = _DCBusOnTime;
-            var offTime = _DCBusOffTime;
-
             var alert = new AlertSender();
 
-            Debug.Assert(onTime < offTime);
+            // First calulate the DC Bus On Time value using Today's Sunset time &
+            // given on Time offset value:
+            DateTime sunriseToday, sunsetToday;
+            SunTimes.GetSunTimes(out sunriseToday, out sunsetToday);
+
+            var onTime = sunsetToday - new TimeSpan(0, 0, _DCBusOnTimeOffset, 0);
+            var offTime = _DCBusOffTime;
+
+            if (onTime < offTime)
+            {
+                LogMessage("Invalid Configuration!. Please check the On/Off Time values");
+                return TimeSpan.MinValue;
+            }
 
             // time to wait for next state change trigger
             TimeSpan stateChangeInterval;
@@ -154,9 +162,12 @@ namespace CTS.Charon.CharonApplication
             else if (DateTime.Now.TimeOfDay >= onTime.TimeOfDay && DateTime.Now.TimeOfDay <= offTime.TimeOfDay)
             {
                 // we are in the onTime..
-                // de-energize relay1 to turn the lights on and set then to turn off at offTime
+                // de-energize relay1 to turn the lights on and set them to turn off at offTime
                 result = await NetDuinoPlus.DenergizeRelay1();
                 stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
+                
+                alert.SendSMSAlert("Alert",
+                    $"DC Bus powered on at {onTime.ToLongTimeString()}. Today's Sunset Time: {sunsetToday.ToLongTimeString()}");
             }
             else
             {
@@ -208,12 +219,21 @@ namespace CTS.Charon.CharonApplication
         private static async Task<TimeSpan> SetNetDuinoACRelay()
         {
             string result;
-            var onTime = _ACBusOnTime;
-            var offTime = _ACBusOffTime;
-
             var alert = new AlertSender();
 
-            Debug.Assert(onTime < offTime);
+            // First calulate the DC Bus On Time value using Today's Sunset time &
+            // given on Time offset value:
+            DateTime sunriseToday, sunsetToday;
+            SunTimes.GetSunTimes(out sunriseToday, out sunsetToday);
+
+            var onTime = sunsetToday - new TimeSpan(0, 0, _ACBusOnTimeOffset, 0);
+            var offTime = _ACBusOffTime;
+
+            if (onTime < offTime)
+            {
+                LogMessage("Invalid Configuration!. Please check the On/Off Time values");
+                return TimeSpan.MinValue;
+            }
 
             // time to wait for next state change trigger
             TimeSpan stateChangeInterval;

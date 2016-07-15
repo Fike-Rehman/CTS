@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharonServiceApplication", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTS.Charon.Devices", "CTS.Charon.NetDuinoPlus\CTS.Charon.Devices.csproj", "{2915E60E-8364-4B42-8A89-0CFC2A57E4A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTS.Utilities.AlertSender", "CTS.Utilities.AlertSender\CTS.Utilities.AlertSender.csproj", "{DCA0D1F3-12D6-4E13-81E2-7D3D78BACF95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTS.Common.Utilities", "CTS.Utilities.AlertSender\CTS.Common.Utilities.csproj", "{DCA0D1F3-12D6-4E13-81E2-7D3D78BACF95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

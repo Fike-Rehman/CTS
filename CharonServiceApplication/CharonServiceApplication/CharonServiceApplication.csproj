@@ -99,9 +99,9 @@
       <Project>{2915e60e-8364-4b42-8a89-0cfc2a57e4a6}</Project>
       <Name>CTS.Charon.Devices</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CTS.Utilities.AlertSender\CTS.Utilities.AlertSender.csproj">
+    <ProjectReference Include="..\CTS.Utilities.AlertSender\CTS.Common.Utilities.csproj">
       <Project>{dca0d1f3-12d6-4e13-81e2-7d3d78bacf95}</Project>
-      <Name>CTS.Utilities.AlertSender</Name>
+      <Name>CTS.Common.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

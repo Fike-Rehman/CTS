@@ -1,0 +1,7 @@
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Utilities.AlertSender\bin\Release\CTS.Common.Utilities.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Utilities.AlertSender\bin\Release\CTS.Common.Utilities.pdb
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Utilities.AlertSender\bin\Release\Newtonsoft.Json.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Utilities.AlertSender\bin\Release\Newtonsoft.Json.xml
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Utilities.AlertSender\obj\Release\CTS.Common.Utilities.csprojResolveAssemblyReference.cache
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Utilities.AlertSender\obj\Release\CTS.Common.Utilities.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CTS.Utilities.AlertSender\obj\Release\CTS.Common.Utilities.pdb

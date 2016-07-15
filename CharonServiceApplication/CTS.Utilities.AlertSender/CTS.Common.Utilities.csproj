@@ -7,8 +7,8 @@
     <ProjectGuid>{DCA0D1F3-12D6-4E13-81E2-7D3D78BACF95}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CTS.Utilities.AlertSender</RootNamespace>
-    <AssemblyName>CTS.Utilities.AlertSender</AssemblyName>
+    <RootNamespace>CTS.Common.Utilities</RootNamespace>
+    <AssemblyName>CTS.Common.Utilities</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AlertSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SunTimes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

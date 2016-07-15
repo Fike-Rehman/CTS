@@ -21,6 +21,6 @@ D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonS
 D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.exe
 D:\GIT\CTS\CharonServiceApplication\CharonServiceApplication\obj\Release\CharonServiceApplication.pdb
 C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CTS.Charon.Devices.dll
-C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CTS.Utilities.AlertSender.dll
 C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CTS.Charon.Devices.pdb
-C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CTS.Utilities.AlertSender.pdb
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CTS.Common.Utilities.dll
+C:\Users\frehman.NCM\GIT\CTS\CharonServiceApplication\CharonServiceApplication\bin\Release\CTS.Common.Utilities.pdb
