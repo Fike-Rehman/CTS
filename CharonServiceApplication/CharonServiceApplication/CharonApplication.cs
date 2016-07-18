@@ -143,7 +143,7 @@ namespace CTS.Charon.CharonApplication
             var onTime = sunsetToday - new TimeSpan(0, 0, _DCBusOnTimeOffset, 0);
             var offTime = _DCBusOffTime;
 
-            if (onTime < offTime)
+            if (onTime > offTime)
             {
                 LogMessage("Invalid Configuration!. Please check the On/Off Time values");
                 return TimeSpan.MinValue;
@@ -229,7 +229,7 @@ namespace CTS.Charon.CharonApplication
             var onTime = sunsetToday - new TimeSpan(0, 0, _ACBusOnTimeOffset, 0);
             var offTime = _ACBusOffTime;
 
-            if (onTime < offTime)
+            if (onTime > offTime)
             {
                 LogMessage("Invalid Configuration!. Please check the On/Off Time values");
                 return TimeSpan.MinValue;
