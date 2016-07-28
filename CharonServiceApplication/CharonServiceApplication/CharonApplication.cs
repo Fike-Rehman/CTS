@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using CTS.Charon.Devices;
@@ -167,7 +166,7 @@ namespace CTS.Charon.CharonApplication
                 stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
                 
                 alert.SendSMSAlert("Alert",
-                    $"DC Bus powered on at {onTime.ToLongTimeString()}. Today's Sunset Time: {sunsetToday.ToLongTimeString()}");
+                    $"DC Bus powered on at {DateTime.Now.ToLongTimeString()}. Today's Sunset Time: {sunsetToday.ToLongTimeString()}");
             }
             else
             {

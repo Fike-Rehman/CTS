@@ -42,34 +42,42 @@ namespace CTS.Common.Utilities
         {
             var success = false;
 
+            var mailSettings = new NameValueCollection
+            {
+                {"username", USERNAME},
+                {"api_key", API_KEY},
+                {"from", @from},
+                {"from_name", fromName},
+                {"subject", subject},
+                {"to", AlertSubscriberEmailAddress}
+            };
+
+
+            if (bodyHtml != null)
+            {
+                mailSettings.Add("body_Html", bodyHtml);
+            }
+            else
+            {
+                if (bodyText != null) mailSettings.Add("body_text", bodyText);
+            }
+
             using (var client = new WebClient())
             {
-                var mailSettings = new NameValueCollection
+                try
                 {
-                    {"username", USERNAME},
-                    {"api_key", API_KEY},
-                    {"from", @from},
-                    {"from_name", fromName},
-                    {"subject", subject},
-                    {"to", AlertSubscriberEmailAddress}
-                };
+                    var response = client.UploadValues("https://api.elasticemail.com/v2/email/send", mailSettings);
 
+                    var result = JObject.Parse(Encoding.UTF8.GetString(response));
 
-                if (bodyHtml != null)
-                {
-                    mailSettings.Add("body_Html", bodyHtml);
+                    if (result["success"].ToString() == "True")
+                        success = true;
                 }
-                else
+                catch(System.Exception)
                 {
-                    if (bodyText != null) mailSettings.Add("body_text", bodyText);
+                    // eat it up
+                    success = false;
                 }
-
-                var response = client.UploadValues("https://api.elasticemail.com/v2/email/send", mailSettings);
-
-                var result = JObject.Parse(Encoding.UTF8.GetString(response));
-
-                if (result["success"].ToString() == "True")
-                    success = true;
 
                 return success;
             }
@@ -86,26 +94,35 @@ namespace CTS.Common.Utilities
         {
             var bSuccess = false;
 
+            var mailSettings = new NameValueCollection
+            {
+                {"username", USERNAME},
+                {"api_key", API_KEY},
+                {"from", @from},
+                {"from_name", fromName},
+                {"subject", subject},
+                {"to", AlertSubscriberSMSAddress },
+                {"body_text", bodyText }
+            };
+
             using (var client = new WebClient())
             {
-                var mailSettings = new NameValueCollection
+                try
                 {
-                    {"username", USERNAME},
-                    {"api_key", API_KEY},
-                    {"from", @from},
-                    {"from_name", fromName},
-                    {"subject", subject},
-                    {"to", AlertSubscriberSMSAddress },
-                    {"body_text", bodyText }
-                };
+                    var response = client.UploadValues("https://api.elasticemail.com/v2/email/send", mailSettings);
 
-                var response = client.UploadValues("https://api.elasticemail.com/v2/email/send", mailSettings);
-                var result = JObject.Parse(Encoding.UTF8.GetString(response));
+                    var result = JObject.Parse(Encoding.UTF8.GetString(response));
 
-                if (result["success"].ToString() == "True")
-                    bSuccess = true;
+                    if (result["success"].ToString() == "True")
+                        bSuccess = true;
+                }
+                catch(System.Exception)
+                {
+                    // eat it up
+                    bSuccess = false;
+                }
 
-                return bSuccess;
+                return bSuccess;   
             }
         }
     }

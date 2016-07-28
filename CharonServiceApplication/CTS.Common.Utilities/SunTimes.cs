@@ -54,6 +54,13 @@ namespace CTS.Common.Utilities
                     sunriseTime = sunrise + currentOffset;
                     sunsetTime = sunset + currentOffset;
 
+                    if(sunsetTime.Date < DateTime.Now.Date)
+                    {
+                        // Add a day because we are looking for the upcoming sunset time.
+                        sunsetTime = sunset + currentOffset + new TimeSpan(1, 0, 0, 0);  
+                    }
+                    
+
                 }
                 catch (JsonReaderException)
                 {
