@@ -5,11 +5,19 @@ using System.Threading.Tasks;
 
 namespace CTS.Charon.Devices
 {
+    public enum RelaySate
+    {
+        UNSET = 0,
+        DENERGIZED = 1,
+        ENERGIZED = 2
+    };
+
     public class NetDuinoPlus : IPingTask
     {
         #region -- Singleton Pattern: --
 
         private static NetDuinoPlus _instance;
+
 
         protected NetDuinoPlus(string deviceIP)
         {
@@ -29,9 +37,9 @@ namespace CTS.Charon.Devices
 
         public static string DeviceIPAddress { get; private set; } = "http://192.168.0.0/";
 
-        public static bool IsRelay1Energized { get; private set; } = false;
+        public static RelaySate Relay1State { get; private set; } = RelaySate.UNSET;
 
-        public static bool IsRelay2Energized { get; private set; } = false;
+        public static RelaySate Relay2State { get; private set; } = RelaySate.UNSET;
 
         #region IPingTask interface
 
@@ -112,7 +120,7 @@ namespace CTS.Charon.Devices
                                 
                     if (res.IsSuccessStatusCode)
                     {
-                        IsRelay1Energized = true;
+                        Relay1State = RelaySate.ENERGIZED;
                         response = "Success";
                     }
 
@@ -144,7 +152,7 @@ namespace CTS.Charon.Devices
 
                     if (res.IsSuccessStatusCode)
                     {
-                        IsRelay1Energized = false;
+                        Relay1State = RelaySate.DENERGIZED;
                         response = "Success";
                     }
 
@@ -176,7 +184,7 @@ namespace CTS.Charon.Devices
 
                     if (res.IsSuccessStatusCode)
                     {
-                        IsRelay2Energized = true;
+                        Relay2State = RelaySate.ENERGIZED;                     
                         response = "Success";
                     }
                 }
@@ -207,7 +215,7 @@ namespace CTS.Charon.Devices
 
                     if (res.IsSuccessStatusCode)
                     {
-                        IsRelay2Energized = false;
+                        Relay2State = RelaySate.DENERGIZED;
                         response = "Success";
                     }
 
