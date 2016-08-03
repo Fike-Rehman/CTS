@@ -10,52 +10,52 @@ namespace CTS.Charon.CharonApplication
 {
     internal class CharonApplication
     {
-        private static bool _consoleMode;
+        private static bool consoleMode;
 
-        private static readonly log4net.ILog _logger =
+        private static readonly log4net.ILog logger =
                  log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly Timer _pingtimer;
-        private static Timer _changeStateR1Timer;
-        private static Timer _changeStateR2Timer;
+        private readonly Timer pingtimer;
+        private static Timer changeStateR1Timer;
+        private static Timer changeStateR2Timer;
 
         // TODO: inject this as dependency
-        private readonly NetDuinoPlus _netDuino;
+        private readonly NetDuinoPlus netDuino;
 
        
-        private static int _DCBusOnTimeOffset;
-        private static DateTime _DCBusOffTime;
-        private static int _ACBusOnTimeOffset;
-        private static DateTime _ACBusOffTime;
+        private static int dcBusOnTimeOffset;
+        private static DateTime dcBusOffTime;
+        private static int acBusOnTimeOffset;
+        private static DateTime acBusOffTime;
 
 
         // TODO: re-factor this to smaller method
         public CharonApplication(bool consoleMode)
         {
-            _consoleMode = consoleMode;
+            CharonApplication.consoleMode = consoleMode;
 
-            if (_consoleMode)
+            if (CharonApplication.consoleMode)
             {
                 Console.WriteLine($"Started Charon Service in console mode {DateTime.Now}");
                 Console.WriteLine("Press any key to exit...");
                 Console.WriteLine();
             }   
             else
-                _logger.Info($"Started Charon Service in console mode {DateTime.Now}");
+                logger.Info($"Started Charon Service in console mode {DateTime.Now}");
 
 
-            // Read in the configurtion:
+            // Read in the configuration:
             var deviceIP = string.Empty;
 
             try
             {
                deviceIP = ConfigurationManager.AppSettings["deviceIPAddress"];
 
-               _DCBusOnTimeOffset = Convert.ToInt16(ConfigurationManager.AppSettings["DCRelayOnTimeOffest"]);
-               _DCBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DCRelayOffTime"]);
+               dcBusOnTimeOffset = Convert.ToInt16(ConfigurationManager.AppSettings["DCRelayOnTimeOffest"]);
+               dcBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DCRelayOffTime"]);
 
-               _ACBusOnTimeOffset = Convert.ToInt16(ConfigurationManager.AppSettings["DCRelayOnTimeOffest"]);
-               _ACBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOffTime"]);
+               acBusOnTimeOffset = Convert.ToInt16(ConfigurationManager.AppSettings["DCRelayOnTimeOffest"]);
+               acBusOffTime = Convert.ToDateTime(ConfigurationManager.AppSettings["ACRelayOffTime"]);
             }
             catch (ConfigurationErrorsException)
             {
@@ -63,16 +63,16 @@ namespace CTS.Charon.CharonApplication
             }
 
             // Initialize and execute a device Ping to see if our board is online:
-            _netDuino = NetDuinoPlus.Instance(deviceIP);
+            this.netDuino = NetDuinoPlus.Instance(deviceIP);
 
-            if (_netDuino.ExecutePing(LogMessage))
+            if (this.netDuino.ExecutePing(LogMessage))
             {
                 LogMessage("Device Initialization Success...");
 
                 // Device initialization succeeded. We can continue with more operations:
                 // set up a timer that sends a ping asynchronously every minute:
                 var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute  
-                _pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
+                this.pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
 
                 // Start with setting up the netDuino relays:
                SetNetDuinoRelaysAsync();
@@ -82,7 +82,7 @@ namespace CTS.Charon.CharonApplication
                 // introduce a delay to give it a chance to report the progress:
                 Thread.Sleep(1000);
 
-                LogMessage($"Device Ping Failed after {_netDuino.NumTries} attempts");
+                LogMessage($"Device Ping Failed after {this.netDuino.NumTries} attempts");
 
                 // There is not much point in continuing on at this point. Just send
                 // out an Alert and stop the app:
@@ -108,7 +108,7 @@ namespace CTS.Charon.CharonApplication
             }
 
 
-            if (!_consoleMode)
+            if (!CharonApplication.consoleMode)
             {
                 Stop();
                 return;
@@ -118,7 +118,7 @@ namespace CTS.Charon.CharonApplication
             Stop();
         }
 
-        private static async void SetNetDuinoRelaysAsync()
+        private async void SetNetDuinoRelaysAsync()
         {
             await SetNetDuinoDCRelay();
             await SetNetDuinoACRelay();
@@ -129,18 +129,18 @@ namespace CTS.Charon.CharonApplication
         /// configured OnTime and OffTime values
         /// </summary>
         /// <returns> returns a TimeSpan that tells us when we need to call this method again</returns>
-        private static async Task<TimeSpan> SetNetDuinoDCRelay()
+        private async Task<TimeSpan> SetNetDuinoDCRelay()
         {
             string result;
             var alert = new AlertSender();
 
-            // First calulate the DC Bus On Time value using Today's Sunset time &
+            // First calculate the DC Bus On Time value using Today's Sunset time &
             // given on Time offset value:
             DateTime sunriseToday, sunsetToday;
             SunTimes.GetSunTimes(out sunriseToday, out sunsetToday);
 
-            var onTime = sunsetToday - new TimeSpan(0, 0, _DCBusOnTimeOffset, 0);
-            var offTime = _DCBusOffTime;
+            var onTime = sunsetToday - new TimeSpan(0, 0, dcBusOnTimeOffset, 0);
+            var offTime = dcBusOffTime;
 
             if (onTime > offTime)
             {
@@ -155,14 +155,14 @@ namespace CTS.Charon.CharonApplication
             {
                 // we are in daytime
                 // energize the relay 1 to turn lights off and set the interval for next state change
-                result = await NetDuinoPlus.EnergizeRelay1();
+                result = await netDuino.EnergizeRelay1();
                 stateChangeInterval = onTime.TimeOfDay - DateTime.Now.TimeOfDay;
             }
             else if (DateTime.Now.TimeOfDay >= onTime.TimeOfDay && DateTime.Now.TimeOfDay <= offTime.TimeOfDay)
             {
                 // we are in the onTime..
                 // de-energize relay1 to turn the lights on and set them to turn off at offTime
-                result = await NetDuinoPlus.DenergizeRelay1();
+                result = await netDuino.DenergizeRelay1();
                 stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
                 
                 alert.SendSMSAlert("Alert",
@@ -172,17 +172,17 @@ namespace CTS.Charon.CharonApplication
             {
                 // Current time is between OffTime and midnight
                 // energize the relays to turn the light off and set the interval to onTime + 1 Day
-                result = await NetDuinoPlus.EnergizeRelay1();
+                result = await netDuino.EnergizeRelay1();
                 stateChangeInterval = (new TimeSpan(1,0,0,0) + onTime.TimeOfDay) - DateTime.Now.TimeOfDay;
             }
 
             if (result == "Success")
             {
-                if (_changeStateR1Timer == null)
+                if (changeStateR1Timer == null)
                 {
                     //This is the first time this method is executed
                     // set up the timer to trigger next time the Relay state change is needed: 
-                    _changeStateR1Timer = new Timer(OnChangeStateR1Timer, null, stateChangeInterval, Timeout.InfiniteTimeSpan);
+                    changeStateR1Timer = new Timer(OnChangeStateR1Timer, null, stateChangeInterval, Timeout.InfiniteTimeSpan);
                 }
             }
             else
@@ -215,18 +215,18 @@ namespace CTS.Charon.CharonApplication
         /// configured OnTime and OffTime values
         /// </summary>
         /// <returns> returns a TimeSpan that tells us when we need to call this method again</returns>
-        private static async Task<TimeSpan> SetNetDuinoACRelay()
+        private async Task<TimeSpan> SetNetDuinoACRelay()
         {
             string result;
             var alert = new AlertSender();
 
-            // First calulate the DC Bus On Time value using Today's Sunset time &
+            // First calculate the DC Bus On Time value using Today's Sunset time &
             // given on Time offset value:
             DateTime sunriseToday, sunsetToday;
             SunTimes.GetSunTimes(out sunriseToday, out sunsetToday);
 
-            var onTime = sunsetToday - new TimeSpan(0, 0, _ACBusOnTimeOffset, 0);
-            var offTime = _ACBusOffTime;
+            var onTime = sunsetToday - new TimeSpan(0, 0, acBusOnTimeOffset, 0);
+            var offTime = acBusOffTime;
 
             if (onTime > offTime)
             {
@@ -241,31 +241,31 @@ namespace CTS.Charon.CharonApplication
             {
                 // we are in daytime
                 // energize the relay 1 to turn lights off and set the interval for next state change
-                result = await NetDuinoPlus.EnergizeRelay2();
+                result = await netDuino.EnergizeRelay2();
                 stateChangeInterval = onTime.TimeOfDay - DateTime.Now.TimeOfDay;
             }
             else if (DateTime.Now.TimeOfDay >= onTime.TimeOfDay && DateTime.Now.TimeOfDay <= offTime.TimeOfDay)
             {
                 // we are in the onTime..
                 // de-energize relay1 to turn the lights on and set then to turn off at offTime
-                result = await NetDuinoPlus.DenergizeRelay2();
+                result = await netDuino.DenergizeRelay2();
                 stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
             }
             else
             {
                 // Current time is between OffTime and midnight
                 // energize the relays to turn the light off and set the interval to onTime + 1 Day
-                result = await NetDuinoPlus.EnergizeRelay2();
+                result = await netDuino.EnergizeRelay2();
                 stateChangeInterval = (new TimeSpan(1, 0, 0, 0) + onTime.TimeOfDay) - DateTime.Now.TimeOfDay;
             }
 
             if (result == "Success")
             {
-                if (_changeStateR2Timer == null)
+                if (changeStateR2Timer == null)
                 {
                     //This is the first time this method is executed
                     // set up the timer to trigger next time the Relay state change is needed: 
-                    _changeStateR2Timer = new Timer(OnChangeStateR2Timer, null, stateChangeInterval, Timeout.InfiniteTimeSpan);
+                    changeStateR2Timer = new Timer(OnChangeStateR2Timer, null, stateChangeInterval, Timeout.InfiniteTimeSpan);
                 }
             }
             else
@@ -299,29 +299,29 @@ namespace CTS.Charon.CharonApplication
         {
             // send a ping asynchronously and reset the timer
 
-            await _netDuino.ExecutePingAsync(LogMessage);
+            await netDuino.ExecutePingAsync(LogMessage);
 
             var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute
-            _pingtimer.Change(pingInterval, Timeout.InfiniteTimeSpan);
+            pingtimer.Change(pingInterval, Timeout.InfiniteTimeSpan);
         }
 
-        private static async void OnChangeStateR1Timer(object state)
+        private async void OnChangeStateR1Timer(object state)
         {
            var stateChangeInterval =  await SetNetDuinoDCRelay();
 
             if (stateChangeInterval > TimeSpan.MinValue)
             {
-                _changeStateR1Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
+                changeStateR1Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
             }
         }
 
-        private static async void OnChangeStateR2Timer(object state)
+        private async void OnChangeStateR2Timer(object state)
         {
             var stateChangeInterval = await SetNetDuinoACRelay();
 
             if (stateChangeInterval > TimeSpan.MinValue)
             {
-                _changeStateR2Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
+                changeStateR2Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
             }
         }
 
@@ -330,23 +330,23 @@ namespace CTS.Charon.CharonApplication
 
         private static void LogMessage(string msg )
         {
-            if (_consoleMode)
+            if (consoleMode)
             {
                 Console.WriteLine(msg);
             }
             else
             {
-                _logger.Info(msg);      
+                logger.Info(msg);      
             }
         }
 
 
         public void Stop()
         {
-            if(_consoleMode)
+            if(consoleMode)
             {
                 Console.WriteLine($"Charon Service Stop requested at {DateTime.Now}");
-                _logger.Info("Exiting Charon Service Application...");
+                logger.Info("Exiting Charon Service Application...");
 
                 var n = 3;
                 while (n > 0)
@@ -358,7 +358,7 @@ namespace CTS.Charon.CharonApplication
             }
             else
             {
-                _logger.Info("Stopping Charon Service Application");
+                logger.Info("Stopping Charon Service Application");
             } 
         }
     }

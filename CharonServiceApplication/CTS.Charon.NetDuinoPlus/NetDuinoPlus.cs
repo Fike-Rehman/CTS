@@ -16,7 +16,7 @@ namespace CTS.Charon.Devices
     {
         #region -- Singleton Pattern: --
 
-        private static NetDuinoPlus _instance;
+        private static NetDuinoPlus instance;
 
 
         protected NetDuinoPlus(string deviceIP)
@@ -28,7 +28,7 @@ namespace CTS.Charon.Devices
         public static NetDuinoPlus Instance(string deviceIp)
         {
             // Uses Lazy initialization
-            return _instance ?? (_instance = new NetDuinoPlus(deviceIp));
+            return instance ?? (instance = new NetDuinoPlus(deviceIp));
         }
 
         #endregion
@@ -54,6 +54,7 @@ namespace CTS.Charon.Devices
         {
             var n = 0;
 
+            // verify first that the a valid DeviceIp is available:
             while (n < NumTries)
             {
                 n++;
@@ -103,7 +104,7 @@ namespace CTS.Charon.Devices
 
         #region Relay Control Methods
 
-        public static async Task<string> EnergizeRelay1()
+        public async Task<string> EnergizeRelay1()
         {
             var response = "";
 
@@ -135,7 +136,7 @@ namespace CTS.Charon.Devices
             }
         }
 
-        public static async Task<string> DenergizeRelay1()
+        public async Task<string> DenergizeRelay1()
         {
             var response = "";
 
@@ -167,7 +168,7 @@ namespace CTS.Charon.Devices
             }
         }
 
-        public static async Task<string> EnergizeRelay2()
+        public async Task<string> EnergizeRelay2()
         {
             var response = "";
 
@@ -198,7 +199,7 @@ namespace CTS.Charon.Devices
             }
         }
 
-        public static async Task<string> DenergizeRelay2()
+        public async Task<string> DenergizeRelay2()
         {
             var response = "";
 
