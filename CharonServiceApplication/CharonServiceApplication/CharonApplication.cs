@@ -15,7 +15,7 @@ namespace CTS.Charon.CharonApplication
         private static readonly log4net.ILog logger =
                  log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly Timer pingtimer;
+        private Timer pingtimer;
         private static Timer changeStateR1Timer;
         private static Timer changeStateR2Timer;
 
@@ -29,7 +29,6 @@ namespace CTS.Charon.CharonApplication
         private static DateTime acBusOffTime;
 
 
-        // TODO: re-factor this to smaller method
         public CharonApplication(bool consoleMode)
         {
             CharonApplication.consoleMode = consoleMode;
@@ -62,10 +61,31 @@ namespace CTS.Charon.CharonApplication
                 LogMessage("Error Reading Configuration File...");
             }
 
-            // Initialize and execute a device Ping to see if our board is online:
-            this.netDuino = NetDuinoPlus.Instance(deviceIP);
+            // Instantiate the device:
+            netDuino = NetDuinoPlus.Instance(deviceIP);
 
-            if (this.netDuino.ExecutePing(LogMessage))
+            // and Run with it:
+            Run();
+
+            if (!CharonApplication.consoleMode)
+            {
+                Stop();
+                return;
+            }
+            
+            Console.ReadKey();
+            Stop();
+        }
+
+
+        /// <summary>
+        /// Executes a Device Ping. If the ping is successful, it starts a ping timer and 
+        /// then sets up the netduino relays to the correct state based on the time of the day.
+        /// Also sets up the timers for subsequent relay state changes.
+        /// </summary>
+        private void Run()
+        {
+            if (netDuino.ExecutePing(LogMessage))
             {
                 LogMessage("Device Initialization Success...");
 
@@ -75,7 +95,7 @@ namespace CTS.Charon.CharonApplication
                 this.pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
 
                 // Start with setting up the netDuino relays:
-               SetNetDuinoRelaysAsync();
+                SetNetDuinoRelaysAsync();
             }
             else
             {
@@ -89,7 +109,7 @@ namespace CTS.Charon.CharonApplication
                 LogMessage("Device is either not online or has mal-functioned.");
                 LogMessage("Sending Alert...");
 
-                var alert = new  AlertSender();
+                var alert = new AlertSender();
 
                 var @address = NetDuinoPlus.DeviceIPAddress.Substring(7, 13);
 
@@ -107,15 +127,6 @@ namespace CTS.Charon.CharonApplication
                     : "Attempt to send an SMS alert failed!");
             }
 
-
-            if (!CharonApplication.consoleMode)
-            {
-                Stop();
-                return;
-            }
-            
-            Console.ReadKey();
-            Stop();
         }
 
         private async void SetNetDuinoRelaysAsync()
