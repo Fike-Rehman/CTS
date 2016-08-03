@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharonServiceApplication", "CharonServiceApplication\CharonServiceApplication.csproj", "{BAAEC8D8-39D1-4EE9-8B21-CEBE05236800}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTS.Charon.Devices", "CTS.Charon.NetDuinoPlus\CTS.Charon.Devices.csproj", "{2915E60E-8364-4B42-8A89-0CFC2A57E4A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTS.Common.Utilities", "CTS.Common.Utilities\CTS.Common.Utilities.csproj", "{DCA0D1F3-12D6-4E13-81E2-7D3D78BACF95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharonUI", "CharonUI\CharonUI.csproj", "{903E5BA5-16F7-4015-A0B3-A5D6C9EB78E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{DCA0D1F3-12D6-4E13-81E2-7D3D78BACF95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCA0D1F3-12D6-4E13-81E2-7D3D78BACF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCA0D1F3-12D6-4E13-81E2-7D3D78BACF95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{903E5BA5-16F7-4015-A0B3-A5D6C9EB78E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{903E5BA5-16F7-4015-A0B3-A5D6C9EB78E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{903E5BA5-16F7-4015-A0B3-A5D6C9EB78E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{903E5BA5-16F7-4015-A0B3-A5D6C9EB78E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
