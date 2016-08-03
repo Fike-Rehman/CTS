@@ -1,0 +1,19 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CharonUI"
+        xmlns:ToggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" x:Class="CharonUI.MainWindow"
+        mc:Ignorable="d"
+        Title="Charon Application" Height="350" Width="525">
+    <Grid>
+        <Label x:Name="lbltime" Content="" HorizontalAlignment="Left" Margin="52,35,0,0" VerticalAlignment="Top" Width="398"/>
+        <TextBox x:Name="tbTime" HorizontalAlignment="Left" Height="23" Margin="84,29,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="262"/>
+        <ToggleSwitch:HorizontalToggleSwitch x:Name="BtnDCBus"
+            IsChecked="false"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left" Margin="388,121,0,0" Checked="OnTurnOn" Unchecked="OnTurnOff"/>
+
+    </Grid>
+</Window>
