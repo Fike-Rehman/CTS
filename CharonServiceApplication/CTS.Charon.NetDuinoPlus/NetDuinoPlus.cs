@@ -5,11 +5,19 @@ using System.Threading.Tasks;
 
 namespace CTS.Charon.Devices
 {
+    public enum RelaySate
+    {
+        UNSET = 0,
+        DENERGIZED = 1,
+        ENERGIZED = 2
+    };
+
     public class NetDuinoPlus : IPingTask
     {
         #region -- Singleton Pattern: --
 
-        private static NetDuinoPlus _instance;
+        private static NetDuinoPlus instance;
+
 
         protected NetDuinoPlus(string deviceIP)
         {
@@ -20,7 +28,7 @@ namespace CTS.Charon.Devices
         public static NetDuinoPlus Instance(string deviceIp)
         {
             // Uses Lazy initialization
-            return _instance ?? (_instance = new NetDuinoPlus(deviceIp));
+            return instance ?? (instance = new NetDuinoPlus(deviceIp));
         }
 
         #endregion
@@ -29,9 +37,9 @@ namespace CTS.Charon.Devices
 
         public static string DeviceIPAddress { get; private set; } = "http://192.168.0.0/";
 
-        public static bool IsRelay1Energized { get; private set; } = false;
+        public static RelaySate Relay1State { get; private set; } = RelaySate.UNSET;
 
-        public static bool IsRelay2Energized { get; private set; } = false;
+        public static RelaySate Relay2State { get; private set; } = RelaySate.UNSET;
 
         #region IPingTask interface
 
@@ -46,6 +54,7 @@ namespace CTS.Charon.Devices
         {
             var n = 0;
 
+            // verify first that the a valid DeviceIp is available:
             while (n < NumTries)
             {
                 n++;
@@ -95,7 +104,7 @@ namespace CTS.Charon.Devices
 
         #region Relay Control Methods
 
-        public static async Task<string> EnergizeRelay1()
+        public async Task<string> EnergizeRelay1()
         {
             var response = "";
 
@@ -112,7 +121,7 @@ namespace CTS.Charon.Devices
                                 
                     if (res.IsSuccessStatusCode)
                     {
-                        IsRelay1Energized = true;
+                        Relay1State = RelaySate.ENERGIZED;
                         response = "Success";
                     }
 
@@ -127,7 +136,7 @@ namespace CTS.Charon.Devices
             }
         }
 
-        public static async Task<string> DenergizeRelay1()
+        public async Task<string> DenergizeRelay1()
         {
             var response = "";
 
@@ -144,7 +153,7 @@ namespace CTS.Charon.Devices
 
                     if (res.IsSuccessStatusCode)
                     {
-                        IsRelay1Energized = false;
+                        Relay1State = RelaySate.DENERGIZED;
                         response = "Success";
                     }
 
@@ -159,7 +168,7 @@ namespace CTS.Charon.Devices
             }
         }
 
-        public static async Task<string> EnergizeRelay2()
+        public async Task<string> EnergizeRelay2()
         {
             var response = "";
 
@@ -176,7 +185,7 @@ namespace CTS.Charon.Devices
 
                     if (res.IsSuccessStatusCode)
                     {
-                        IsRelay2Energized = true;
+                        Relay2State = RelaySate.ENERGIZED;                     
                         response = "Success";
                     }
                 }
@@ -190,7 +199,7 @@ namespace CTS.Charon.Devices
             }
         }
 
-        public static async Task<string> DenergizeRelay2()
+        public async Task<string> DenergizeRelay2()
         {
             var response = "";
 
@@ -207,7 +216,7 @@ namespace CTS.Charon.Devices
 
                     if (res.IsSuccessStatusCode)
                     {
-                        IsRelay2Energized = false;
+                        Relay2State = RelaySate.DENERGIZED;
                         response = "Success";
                     }
 
