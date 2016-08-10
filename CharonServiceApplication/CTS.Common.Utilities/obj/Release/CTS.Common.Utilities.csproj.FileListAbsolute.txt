@@ -18,3 +18,10 @@ C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CTS.Common.Utilities\bin\
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CTS.Common.Utilities\obj\Release\CTS.Common.Utilities.csprojResolveAssemblyReference.cache
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CTS.Common.Utilities\obj\Release\CTS.Common.Utilities.dll
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CTS.Common.Utilities\obj\Release\CTS.Common.Utilities.pdb
+D:\GIT\CTS\CharonServiceApplication\CTS.Common.Utilities\bin\Release\CTS.Common.Utilities.dll
+D:\GIT\CTS\CharonServiceApplication\CTS.Common.Utilities\bin\Release\CTS.Common.Utilities.pdb
+D:\GIT\CTS\CharonServiceApplication\CTS.Common.Utilities\bin\Release\Newtonsoft.Json.dll
+D:\GIT\CTS\CharonServiceApplication\CTS.Common.Utilities\bin\Release\Newtonsoft.Json.xml
+D:\GIT\CTS\CharonServiceApplication\CTS.Common.Utilities\obj\Release\CTS.Common.Utilities.csprojResolveAssemblyReference.cache
+D:\GIT\CTS\CharonServiceApplication\CTS.Common.Utilities\obj\Release\CTS.Common.Utilities.dll
+D:\GIT\CTS\CharonServiceApplication\CTS.Common.Utilities\obj\Release\CTS.Common.Utilities.pdb

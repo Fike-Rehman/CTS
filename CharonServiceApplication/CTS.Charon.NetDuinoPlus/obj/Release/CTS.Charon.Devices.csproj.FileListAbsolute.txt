@@ -11,3 +11,4 @@ C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\b
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\obj\Release\CTS.Charon.Devices.csprojResolveAssemblyReference.cache
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\obj\Release\CTS.Charon.Devices.dll
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\obj\Release\CTS.Charon.Devices.pdb
+D:\GIT\CTS\CharonServiceApplication\CTS.Charon.NetDuinoPlus\obj\Release\CTS.Charon.Devices.csprojResolveAssemblyReference.cache
