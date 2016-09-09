@@ -41,7 +41,7 @@ namespace CTS.Charon.CharonApplication
                 Console.WriteLine();
             }   
             else
-                logger.Info($"Started Charon Service in console mode {DateTime.Now}");
+                logger.Info($"Started Charon Service (No Console) {DateTime.Now}");
 
 
             // Read in the configuration:
@@ -86,6 +86,7 @@ namespace CTS.Charon.CharonApplication
         /// </summary>
         private void Run()
         {
+            
             if (netDuino.ExecutePing(LogMessage))
             {
                 LogMessage("Device Initialization Success...");
@@ -159,7 +160,7 @@ namespace CTS.Charon.CharonApplication
             var onTime = sunsetToday - new TimeSpan(0, 0, dcBusOnTimeOffset, 0);
             var offTime = dcBusOffTime;
 
-            if (onTime > offTime)
+            if (onTime.TimeOfDay > offTime.TimeOfDay)
             {
                 LogMessage("Invalid Configuration!. Please check the On/Off Time values");
                 return TimeSpan.MinValue;
@@ -250,7 +251,7 @@ namespace CTS.Charon.CharonApplication
             var onTime = sunsetToday - new TimeSpan(0, 0, acBusOnTimeOffset, 0);
             var offTime = acBusOffTime;
 
-            if (onTime > offTime)
+            if (onTime.TimeOfDay > offTime.TimeOfDay)
             {
                 LogMessage("Invalid Configuration!. Please check the On/Off Time values");
                 return TimeSpan.MinValue;
