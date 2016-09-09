@@ -1,0 +1,17 @@
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Release\CharonUI.exe.config
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Release\CharonUI.exe
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Release\CharonUI.pdb
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Release\CTS.Charon.Devices.dll
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Release\ToggleSwitch.dll
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Release\CTS.Charon.Devices.pdb
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\CharonUI.csprojResolveAssemblyReference.cache
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\MainWindow.g.cs
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\App.g.cs
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\CharonUI_MarkupCompile.cache
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\CharonUI_MarkupCompile.lref
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\MainWindow.baml
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\CharonUI.g.resources
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\CharonUI.Properties.Resources.resources
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\CharonUI.csproj.GenerateResource.Cache
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\CharonUI.exe
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Release\CharonUI.pdb
