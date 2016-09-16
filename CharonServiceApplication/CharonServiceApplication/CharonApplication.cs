@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Configuration;
 using System.Threading.Tasks;
+using System.Threading;
 using CTS.Charon.Devices;
 using CTS.Common.Utilities;
-using System.Timers;
+
 
 
 namespace CTS.Charon.CharonApplication
@@ -94,11 +95,7 @@ namespace CTS.Charon.CharonApplication
                 // Device initialization succeeded. We can continue with more operations:
                 // set up a timer that sends a ping asynchronously every minute:
                 var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute  
-
-                pingtimer = new Timer(pingInterval.TotalMilliseconds);
-                pingtimer.Elapsed += OnPingTimer;
-                pingtimer.AutoReset = true;
-                pingtimer.Enabled = true;
+                pingtimer = new Timer(OnPingTimer, null, pingInterval, Timeout.InfiniteTimeSpan);
 
                 // Start with setting up the netDuino relays:
                 SetNetDuinoRelaysAsync();
@@ -200,10 +197,7 @@ namespace CTS.Charon.CharonApplication
                 {
                     //This is the first time this method is executed
                     // set up the timer to trigger next time the Relay state change is needed: 
-                    changeStateR1Timer = new Timer(stateChangeInterval.TotalMilliseconds);
-                    changeStateR1Timer.Elapsed += OnChangeStateR1Timer;
-                    changeStateR1Timer.AutoReset = false;
-                    changeStateR1Timer.Enabled = true;
+                    changeStateR1Timer = new Timer(OnChangeStateR1Timer, null, stateChangeInterval, Timeout.InfiniteTimeSpan);
                 }
             }
             else
@@ -288,10 +282,7 @@ namespace CTS.Charon.CharonApplication
                 {
                     //This is the first time this method is executed
                     // set up the timer to trigger next time the Relay state change is needed: 
-                    changeStateR2Timer = new Timer(stateChangeInterval.TotalMilliseconds);
-                    changeStateR2Timer.Elapsed += OnChangeStateR2Timer;
-                    changeStateR2Timer.AutoReset = false;
-                    changeStateR2Timer.Enabled = true;
+                    changeStateR2Timer = new Timer(OnChangeStateR2Timer, null, stateChangeInterval, Timeout.InfiniteTimeSpan);
                 }
             }
             else
@@ -321,41 +312,33 @@ namespace CTS.Charon.CharonApplication
 
         #region Timer event Handler methods
 
-        private async void OnPingTimer(object sender, ElapsedEventArgs e)
+        private async void OnPingTimer(object state)
         {
-            // send a ping asynchronously
-            
-            await netDuino.ExecutePingAsync(LogMessage);     
+            // send a ping asynchronously and reset the timer
+
+            await netDuino.ExecutePingAsync(LogMessage);
+
+            var pingInterval = new TimeSpan(0, 0, 1, 0); // 1 minute
+            pingtimer.Change(pingInterval, Timeout.InfiniteTimeSpan);
         }
 
-        private async void OnChangeStateR1Timer(object sender, ElapsedEventArgs e)
+        private async void OnChangeStateR1Timer(object state)
         {
-            changeStateR1Timer.Stop();
-
-            var stateChangeInterval =  await SetNetDuinoDCRelay();
-
-            LogMessage(
-                $"-- Setting R1 timer to go off in {stateChangeInterval}. Current Time: {DateTime.Now.ToLongTimeString()}");
+            var stateChangeInterval = await SetNetDuinoDCRelay();
 
             if (stateChangeInterval > TimeSpan.MinValue)
             {
-                changeStateR1Timer.Interval = stateChangeInterval.TotalMilliseconds;
-                changeStateR1Timer.Start();
+                changeStateR1Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
             }
-
-            
         }
 
-        private async void OnChangeStateR2Timer(object sender, ElapsedEventArgs e)
+        private async void OnChangeStateR2Timer(object state)
         {
-            changeStateR2Timer.Stop();
-
             var stateChangeInterval = await SetNetDuinoACRelay();
 
             if (stateChangeInterval > TimeSpan.MinValue)
             {
-                changeStateR2Timer.Interval = stateChangeInterval.TotalMilliseconds;
-                changeStateR2Timer.Start();
+                changeStateR2Timer.Change(stateChangeInterval, Timeout.InfiniteTimeSpan);
             }
         }
 
@@ -393,12 +376,12 @@ namespace CTS.Charon.CharonApplication
             else
             {
                 logger.Info("Stopping Charon Service Application");
-            } 
+            }
 
-            // Dispose the Timers:
-            pingtimer.Dispose();
-            changeStateR1Timer.Dispose();
-            changeStateR2Timer.Dispose();
+            // Dispose the Timers if they still exist
+            pingtimer?.Dispose();
+            changeStateR1Timer?.Dispose();
+            changeStateR2Timer?.Dispose();
         }
     }
 }
