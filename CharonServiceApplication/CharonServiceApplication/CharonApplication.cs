@@ -68,15 +68,13 @@ namespace CTS.Charon.CharonApplication
 
             // and Run with it:
             Run();
-            
-            if (!CharonApplication.consoleMode)
+
+            // if in the console mode, wait for the key press
+            if (CharonApplication.consoleMode)
             {
+                Console.ReadKey();
                 Stop();
-                return;
-            }
-            
-            Console.ReadKey();
-            Stop();
+            } 
         }
 
 
@@ -103,7 +101,7 @@ namespace CTS.Charon.CharonApplication
             else
             {
                 // introduce a delay to give it a chance to report the progress:
-                Task.Delay(1000);
+                Task.Delay(1000); // called synchronously
                 
 
                 LogMessage($"Device Ping Failed after {this.netDuino.NumTries} attempts");
