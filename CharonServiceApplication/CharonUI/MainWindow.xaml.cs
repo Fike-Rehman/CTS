@@ -28,8 +28,8 @@ namespace CharonUI
         {
             InitializeComponent();
 
-            tbTime.IsReadOnly = true;
-            tbTime.Text = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
+          //  tbTime.IsReadOnly = true;
+          //  tbTime.Text = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
 
             // Read in the configurtion:
             var deviceIP = string.Empty;

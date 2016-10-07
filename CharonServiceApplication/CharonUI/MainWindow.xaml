@@ -6,9 +6,8 @@
         xmlns:local="clr-namespace:CharonUI"
         xmlns:ToggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" xmlns:Borders="clr-namespace:ToggleSwitch.Borders;assembly=ToggleSwitch" x:Class="CharonUI.MainWindow"
         mc:Ignorable="d"
-        Title="Charon Application" Height="350" Width="525" WindowStyle="ToolWindow">
+        Height="350" Width="525" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
     <Window.Resources>
-
         <ControlTemplate x:Key="GroovedThumbTemplate" TargetType="{x:Type Thumb}">
             <Grid Background="Transparent">
                 <VisualStateManager.VisualStateGroups>
@@ -65,10 +64,20 @@
             </Grid>
         </ControlTemplate>
     </Window.Resources>
-    <Grid>
+
+    <Border Background="#E42233" BorderThickness="1,1,1,1" CornerRadius="10,10,10,10">
+        <StackPanel Margin="0,0,0,286">
+        <TextBlock x:Name="TbAppTitle" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="152,5,89,5" Text="Welcome to Charon Application" Width="276" TextAlignment="Center"/>
+    </StackPanel>
+    </Border>
+
+
+    <!--https://csharplessons.wordpress.com/2012/06/03/wpf-rounded-corner-window/-->
+
+    <!--<Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="9*"/>
-            <ColumnDefinition Width="508*"/>
+            <ColumnDefinition Width="500"/>
         </Grid.ColumnDefinitions>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -84,5 +93,5 @@
 
         <ToggleSwitch:HorizontalToggleSwitch x:Name="HorizontalToggleSwitch" ThumbTemplate="{StaticResource GroovedThumbTemplate}" Margin="379.394,171,41,123" Grid.Column="1" />
 
-    </Grid>
+    </Grid>-->
 </Window>
