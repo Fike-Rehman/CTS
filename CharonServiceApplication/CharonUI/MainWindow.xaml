@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CharonUI"
         xmlns:ToggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" xmlns:Borders="clr-namespace:ToggleSwitch.Borders;assembly=ToggleSwitch" x:Class="CharonUI.MainWindow"
         mc:Ignorable="d"
-        Height="350" Width="525" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
+        Height="328" Width="525" WindowStyle="None"  AllowsTransparency="True" Background="Transparent">
     <Window.Resources>
         <ControlTemplate x:Key="GroovedThumbTemplate" TargetType="{x:Type Thumb}">
             <Grid Background="Transparent">
@@ -65,14 +65,25 @@
         </ControlTemplate>
     </Window.Resources>
 
-    <Border Background="#E42233" BorderThickness="1,1,1,1" CornerRadius="10,10,10,10">
-        <StackPanel Margin="0,0,0,286">
-        <TextBlock x:Name="TbAppTitle" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="152,5,89,5" Text="Welcome to Charon Application" Width="276" TextAlignment="Center"/>
-    </StackPanel>
+    <Border Background="#882222" BorderThickness="1,1,1,1" CornerRadius="10,10,10,10">
+
+        <StackPanel>
+
+            <Button Margin="475,10,10,10" Height="25" Width="25" Content="X" Click="Button_Click"/>
+
+            <Border Margin="20,5,20,0" Padding="5" Background="LightYellow" BorderBrush="SteelBlue" BorderThickness="3,5,3,5" CornerRadius="3" VerticalAlignment="Top" Height="249">
+
+                <StackPanel Margin="5">
+                    <TextBlock Margin="3" Padding="3" FontFamily="Calibri" FontSize="16" FontWeight="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}" Foreground="#FF640202"><Run Text="Charon Application:"/></TextBlock>
+                   
+                </StackPanel>
+            </Border>
+        </StackPanel>
     </Border>
 
 
-    <!--https://csharplessons.wordpress.com/2012/06/03/wpf-rounded-corner-window/-->
+
+
 
     <!--<Grid>
         <Grid.ColumnDefinitions>
