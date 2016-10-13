@@ -27,6 +27,7 @@ namespace CharonUI
         public MainWindow()
         {
             InitializeComponent();
+            this.lblDate.Text = DateTime.Now.ToLongDateString();
 
           //  tbTime.IsReadOnly = true;
           //  tbTime.Text = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
