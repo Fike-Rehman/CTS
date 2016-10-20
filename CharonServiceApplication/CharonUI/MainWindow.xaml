@@ -71,13 +71,33 @@
 
             <Button Margin="475,10,10,10" Height="25" Width="25" Content="X" Click="Button_Click"/>
 
-            <Border Margin="20,5,20,0" Padding="5" Background="LightYellow" BorderBrush="SteelBlue" BorderThickness="3,5,3,5" CornerRadius="3" VerticalAlignment="Top" Height="249">
+            <Border Margin="20,5,20,0" Padding="5" BorderBrush="LightYellow" BorderThickness="3,5,3,5" CornerRadius="10" VerticalAlignment="Top" Height="249" Background="LightYellow">
 
-                <StackPanel Margin="5">
-                    <TextBlock Margin="3" Padding="3" FontFamily="Calibri" FontSize="16" FontWeight="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}" Foreground="#FF640202"><Run Text="Charon Application:"/></TextBlock>
-                    <TextBlock Margin="3" x:Name="lblDate" FontFamily="Calibri" FontSize="14" TextOptions.TextFormattingMode="Display" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold">October</TextBlock>
+                <Grid Margin="5,5,5,11">
 
-                </StackPanel>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.Row="0" Margin="9,10,9.8,0.2" Padding="3" FontFamily="Calibri" FontSize="16" FontWeight="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}" Foreground="#FF640202" VerticalAlignment="Center" HorizontalAlignment="Center"><Run Text="Charon Application:"/></TextBlock>
+                    <TextBlock Margin="0,9.8,0.6,0" x:Name="lblDate" FontFamily="Calibri" FontSize="14" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Right" VerticalAlignment="Top" FontWeight="Bold" Width="304" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"></TextBlock>
+                    <TextBlock x:Name="lblSunrise" Grid.Column="1" HorizontalAlignment="Left" Margin="48.2,10.8,0,8.4" Grid.Row="2" TextWrapping="Wrap" Text="Sunrise:" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="lblSunset" Grid.Column="1" HorizontalAlignment="Left" Margin="48.2,9.6,0,10.4" Grid.Row="3" TextWrapping="Wrap" Text="Sunset:" VerticalAlignment="Center"/>
+
+
+
+                </Grid>
+
             </Border>
         </StackPanel>
 

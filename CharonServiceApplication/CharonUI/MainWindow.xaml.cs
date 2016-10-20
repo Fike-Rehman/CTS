@@ -14,9 +14,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CTS.Charon.Devices;
 using System.Configuration;
+using System.Windows.Threading;
 
 namespace CharonUI
 {
+    
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -27,7 +30,14 @@ namespace CharonUI
         public MainWindow()
         {
             InitializeComponent();
-            this.lblDate.Text = DateTime.Now.ToLongDateString();
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+
+
+           
 
           //  tbTime.IsReadOnly = true;
           //  tbTime.Text = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
@@ -51,7 +61,10 @@ namespace CharonUI
            // InitButtonStates();
         }
 
-       
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            lblDate.Text = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
+        }
 
         private void OnTurnOn(object sender, RoutedEventArgs e)
         {
