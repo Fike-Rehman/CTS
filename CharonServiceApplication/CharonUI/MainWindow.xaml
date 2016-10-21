@@ -4,7 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CharonUI"
-        xmlns:ToggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" xmlns:Borders="clr-namespace:ToggleSwitch.Borders;assembly=ToggleSwitch" x:Class="CharonUI.MainWindow"
+        xmlns:ToggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" 
+        xmlns:Utils="clr-namespace:ToggleSwitch.Utils;assembly=ToggleSwitch"
+        xmlns:Borders="clr-namespace:ToggleSwitch.Borders;assembly=ToggleSwitch" x:Class="CharonUI.MainWindow"
         mc:Ignorable="d"
         Height="328" Width="525" WindowStyle="None"  AllowsTransparency="True" Background="Transparent">
     <Window.Resources>
@@ -63,17 +65,22 @@
                 </Borders:OuterGlowBorder>
             </Grid>
         </ControlTemplate>
+
+
+
     </Window.Resources>
 
-    <Border Background="#882222" BorderThickness="1,1,1,1" CornerRadius="10,10,10,10">
+
+
+    <Border Background="#882222" BorderThickness="1,1,1,1" CornerRadius="10,10,10,10" Margin="0,0,0,-22">
 
         <StackPanel>
 
             <Button Margin="475,10,10,10" Height="25" Width="25" Content="X" Click="Button_Click"/>
 
-            <Border Margin="20,5,20,0" Padding="5" BorderBrush="LightYellow" BorderThickness="3,5,3,5" CornerRadius="10" VerticalAlignment="Top" Height="249" Background="LightYellow">
+            <Border Margin="20,5,20,0" Padding="5" BorderBrush="LightYellow" BorderThickness="3,5,3,5" CornerRadius="10" VerticalAlignment="Top" Height="269" Background="LightYellow">
 
-                <Grid Margin="5,5,5,11">
+                <Grid Margin="8,11,2,5">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
@@ -87,12 +94,19 @@
                         <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Column="0" Grid.Row="0" Margin="9,10,9.8,0.2" Padding="3" FontFamily="Calibri" FontSize="16" FontWeight="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}" Foreground="#FF640202" VerticalAlignment="Center" HorizontalAlignment="Center"><Run Text="Charon Application:"/></TextBlock>
-                    <TextBlock Margin="0,9.8,0.6,0" x:Name="lblDate" FontFamily="Calibri" FontSize="14" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Right" VerticalAlignment="Top" FontWeight="Bold" Width="304" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"></TextBlock>
-                    <TextBlock x:Name="lblSunrise" Grid.Column="1" HorizontalAlignment="Left" Margin="48.2,10.8,0,8.4" Grid.Row="2" TextWrapping="Wrap" Text="Sunrise:" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="lblSunset" Grid.Column="1" HorizontalAlignment="Left" Margin="48.2,9.6,0,10.4" Grid.Row="3" TextWrapping="Wrap" Text="Sunset:" VerticalAlignment="Center"/>
+                    <TextBlock Margin="0,6,1,0" x:Name="lblDate" FontFamily="Calibri" FontSize="14" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Right" VerticalAlignment="Top" FontWeight="Bold" Width="304" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"/>
+                    <Label x:Name="lblSunriseVal" Content="07:05 AM" Grid.Column="2" HorizontalAlignment="Left" Margin="17,3,0,5" Grid.Row="2" VerticalAlignment="Center" Width="120" Height="25"/>
+                    <Label x:Name="lblSunrise" Content="Today's Sunrise:" Grid.Column="1" HorizontalAlignment="Left" Margin="22,3,0,2" Grid.Row="2" VerticalAlignment="Center" Width="120" Height="28"/>
+                    <Label x:Name="lblSunset" Content="Today's Sunset:" Grid.Column="1" HorizontalAlignment="Left" Margin="22,6,0,0" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="lblSunsetVal" Content="06:15 PM" Grid.Column="2" HorizontalAlignment="Left" Margin="17,6,0,0" Grid.Row="3" VerticalAlignment="Top" Width="115" Height="24"/>
+                    <ToggleSwitch:HorizontalToggleSwitch IsChecked="True" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="4" Margin="10,1,0,7" />
+                    <ToggleSwitch:HorizontalToggleSwitch IsChecked="True" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="5" Margin="10,8,0,1" />
+                    <Label x:Name="lblDCBus" Content="DC Bus:" Grid.Column="1" HorizontalAlignment="Left" Margin="24,0,0,0" Grid.Row="4" VerticalAlignment="Top" Width="110"/>
+                    <Label x:Name="lblACBus" Content="AC Bus:" Grid.Column="1" HorizontalAlignment="Left" Margin="24,10,0,0" Grid.Row="5" VerticalAlignment="Top" Width="110"/>
 
 
 

@@ -106,6 +106,10 @@
       <Project>{2915e60e-8364-4b42-8a89-0cfc2a57e4a6}</Project>
       <Name>CTS.Charon.Devices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CTS.Common.Utilities\CTS.Common.Utilities.csproj">
+      <Project>{dca0d1f3-12d6-4e13-81e2-7d3d78bacf95}</Project>
+      <Name>CTS.Common.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -15,3 +15,7 @@ C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\obj\Debug\Charon
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Debug\ToggleSwitch.dll
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Debug\CTS.Charon.Devices.dll
 C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Debug\CTS.Charon.Devices.pdb
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Debug\CTS.Common.Utilities.dll
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Debug\Newtonsoft.Json.dll
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Debug\CTS.Common.Utilities.pdb
+C:\Users\frehman\Data\Git\CTS\CharonServiceApplication\CharonUI\bin\Debug\Newtonsoft.Json.xml

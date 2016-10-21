@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using CTS.Charon.Devices;
 using System.Configuration;
 using System.Windows.Threading;
+using CTS.Common.Utilities;
 
 namespace CharonUI
 {
@@ -37,10 +38,13 @@ namespace CharonUI
             timer.Start();
 
 
-           
+            // Display today's sunset/sunrise times:
 
-          //  tbTime.IsReadOnly = true;
-          //  tbTime.Text = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
+            DateTime sunriseToday, sunsetToday;
+            SunTimes.GetSunTimes(out sunriseToday, out sunsetToday);
+
+            lblSunriseVal.Content = sunriseToday.ToShortTimeString();
+            lblSunsetVal.Content = sunsetToday.ToShortTimeString();
 
             // Read in the configurtion:
             var deviceIP = string.Empty;
