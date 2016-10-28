@@ -5,6 +5,7 @@ using CTS.Charon.Devices;
 using System.Configuration;
 using System.Windows.Threading;
 using CTS.Common.Utilities;
+using System.Speech.Synthesis;
 
 
 namespace CharonUI
@@ -70,9 +71,13 @@ namespace CharonUI
         private void BtnACBus_Unchecked(object sender, RoutedEventArgs e)
         {
             // turn the lights off
-            MessageBox.Show("turned the AC Bus off");
 
-            // SetACRelayAsync(false);
+            var synth = new SpeechSynthesizer();
+
+            synth.SetOutputToDefaultAudioDevice();
+            
+            synth.SpeakAsync("Turned the AC Bus Off at" + DateTime.Now.ToShortTimeString());
+                  
         }
 
         private void BtnACBus_Checked(object sender, RoutedEventArgs e)
