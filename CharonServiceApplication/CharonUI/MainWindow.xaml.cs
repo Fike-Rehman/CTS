@@ -6,6 +6,8 @@ using System.Configuration;
 using System.Windows.Threading;
 using CTS.Common.Utilities;
 using System.Speech.Synthesis;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 
 namespace CharonUI
@@ -17,16 +19,21 @@ namespace CharonUI
     {
         private readonly NetDuinoPlus netDuino;
 
+        private readonly SpeechSynthesizer speechSynthesizer;
+
         public MainWindow()
         {
             InitializeComponent();
 
+            speechSynthesizer = new SpeechSynthesizer();
+            speechSynthesizer.SetOutputToDefaultAudioDevice();
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
+            var timer = new DispatcherTimer
+                        {
+                            Interval = TimeSpan.FromSeconds(1)
+                        };
             timer.Tick += Timer_Tick;
             timer.Start();
-
 
             // Display today's sunset/sunrise times:
 
@@ -71,38 +78,25 @@ namespace CharonUI
         private void BtnACBus_Unchecked(object sender, RoutedEventArgs e)
         {
             // turn the lights off
-
-            var synth = new SpeechSynthesizer();
-
-            synth.SetOutputToDefaultAudioDevice();
-            
-            synth.SpeakAsync("Turned the AC Bus Off at" + DateTime.Now.ToShortTimeString());
-                  
+            SetACRelayAsync(false);            
         }
 
         private void BtnACBus_Checked(object sender, RoutedEventArgs e)
         {
             // turn the lights On
-            MessageBox.Show("turned the AC Bus oN");
-
-            // SetACRelayAsync(true);
+            SetACRelayAsync(true);
         }
 
         private void BtnDCBus_Unchecked(object sender, RoutedEventArgs e)
         {
             // turn the lights off
-            MessageBox.Show("turned the DC Bus off");
-
-           // SetDCRelayAsync(false);
-
+            SetDCRelayAsync(false);
         }
 
         private void BtnDCBus_Checked(object sender, RoutedEventArgs e)
         {
             // trun the lights oN
-            MessageBox.Show("turned the DC Bus oN");
-
-            // SetDCRelayAsync(true);
+            SetDCRelayAsync(true);
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -126,14 +120,30 @@ namespace CharonUI
         private async void SetDCRelayAsync(bool on)
         {
             string result;
-
-            // Denergize the relay to turn the light on, otherwise enrgize them
-
-            result = @on ? await netDuino.DenergizeRelay1() : await netDuino.EnergizeRelay1();
-
-            if (result == "Success")
+            
+            if (on)
             {
-                // announce success
+                speechSynthesizer.Speak("Turning the DC Bus On at" + DateTime.Now.ToShortTimeString());
+                speechSynthesizer.Speak("Please stand By.....");
+
+                result = await netDuino.DenergizeRelay1();
+
+                if (result != "Success")
+                {
+                    speechSynthesizer.Speak("DC Bus activation failed!");
+                }
+            }
+            else
+            {
+                speechSynthesizer.Speak("Turning the DC Bus Off at" + DateTime.Now.ToShortTimeString());
+                speechSynthesizer.Speak("Please stand By.....");
+
+                result = await netDuino.EnergizeRelay1();
+
+                if (result != "Success")
+                {
+                    speechSynthesizer.Speak("DC Bus de-activation failed!");
+                }
             }
         }
 
@@ -141,14 +151,31 @@ namespace CharonUI
         {
             string result;
 
-            // Denergize the relay to turn the light on, otherwise enrgize them
-
-            result = @on ? await netDuino.DenergizeRelay2() : await netDuino.EnergizeRelay2();
-
-            if (result == "Success")
+            if (on)
             {
-                // announce success
+                speechSynthesizer.Speak("Turning the AC Bus On at" + DateTime.Now.ToShortTimeString());
+                speechSynthesizer.Speak("Please stand By.....");
+
+                result = await netDuino.DenergizeRelay2();
+
+                if (result != "Success")
+                {
+                    speechSynthesizer.Speak("AC Bus activation failed!");
+                }
             }
+            else
+            {
+                speechSynthesizer.Speak("Turning the AC Bus Off at" + DateTime.Now.ToShortTimeString());
+                speechSynthesizer.Speak("Please stand By.....");
+
+                result = await netDuino.EnergizeRelay2();
+
+                if (result != "Success")
+                {
+                    speechSynthesizer.Speak("AC Bus de-activation failed!");
+                }
+            }
+
         }
     }
 }

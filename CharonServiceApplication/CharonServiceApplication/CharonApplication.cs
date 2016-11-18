@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using CTS.Charon.Devices;
 using CTS.Common.Utilities;
+using System.Speech.Synthesis;
 
 
 
@@ -29,9 +30,14 @@ namespace CTS.Charon.CharonApplication
         private static int acBusOnTimeOffset;
         private static DateTime acBusOffTime;
 
-
+        private readonly SpeechSynthesizer speechSynthesizer;
+        
         public CharonApplication(bool consoleMode)
         {
+            speechSynthesizer = new SpeechSynthesizer();
+            speechSynthesizer.SetOutputToDefaultAudioDevice();
+
+
             CharonApplication.consoleMode = consoleMode;
 
             
@@ -89,6 +95,8 @@ namespace CTS.Charon.CharonApplication
             if (netDuino.ExecutePing(LogMessage))
             {
                 LogMessage("Device Initialization Success...");
+
+                speechSynthesizer.Speak("Device Initialization Successful!");
 
                 // Device initialization succeeded. We can continue with more operations:
                 // set up a timer that sends a ping asynchronously every minute:
@@ -168,6 +176,8 @@ namespace CTS.Charon.CharonApplication
             {
                 // we are in daytime
                 // energize the relay 1 to turn lights off and set the interval for next state change
+
+                speechSynthesizer.Speak("Turning the DC relay off. Please standby...");
                 result = await netDuino.EnergizeRelay1();
                 stateChangeInterval = onTime.TimeOfDay - DateTime.Now.TimeOfDay;
             }
@@ -175,6 +185,8 @@ namespace CTS.Charon.CharonApplication
             {
                 // we are in the onTime..
                 // de-energize relay1 to turn the lights on and set them to turn off at offTime
+
+                speechSynthesizer.Speak("Turning the DC relay On. Please standby...");
                 result = await netDuino.DenergizeRelay1();
                 stateChangeInterval = offTime.TimeOfDay - DateTime.Now.TimeOfDay;
                 
@@ -183,8 +195,10 @@ namespace CTS.Charon.CharonApplication
             }
             else
             {
+
                 // Current time is between OffTime and midnight
                 // energize the relays to turn the light off and set the interval to onTime + 1 Day
+                speechSynthesizer.Speak("Turning the DC relay off. Please standby...");
                 result = await netDuino.EnergizeRelay1();
                 stateChangeInterval = (new TimeSpan(1,0,0,0) + onTime.TimeOfDay) - DateTime.Now.TimeOfDay;
             }
